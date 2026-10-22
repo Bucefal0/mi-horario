@@ -2829,6 +2829,9 @@
       showToast('Nota eliminada', 'info');
       updateCellNoteBadge(dia, modulo, grupo);
       renderHistorial();
+
+      // Eliminar también en Google Sheets
+      deleteNoteFromGoogleSheets(noteId);
     }
 
     function renderHistorial() {
@@ -2956,6 +2959,24 @@
       });
     }
 
+    function deleteNoteFromGoogleSheets(noteId) {
+      const btn = document.getElementById('btnCloudSync');
+      if (btn) btn.classList.add('syncing');
+
+      fetch(GOOGLE_SHEETS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'delete', id: noteId })
+      }).then(() => {
+        if (btn) btn.classList.remove('syncing');
+        showToast('🗑️ Eliminada de Google Sheets', 'info');
+      }).catch(err => {
+        if (btn) btn.classList.remove('syncing');
+        console.warn('Error eliminando de Sheets:', err);
+      });
+    }
+
     async function syncWithGoogleSheets(userInitiated = false) {
       const btn = document.getElementById('btnCloudSync');
       if (btn) btn.classList.add('syncing');
@@ -2965,8 +2986,9 @@
         const res = await fetch(GOOGLE_SHEETS_URL);
         const data = await res.json();
 
-        if (Array.isArray(data) && data.length > 0) {
-          let countAdded = 0;
+        if (Array.isArray(data)) {
+          // Reconciliación con Google Sheets como fuente de verdad
+          const newMap = {};
           data.forEach(item => {
             const grupo = item.Grupo || item.grupo;
             const dia = item.Día || item.Dia || item.dia;
@@ -2974,35 +2996,34 @@
 
             if (grupo && dia && modulo && MATRIZ_HORARIO[dia]) {
               const key = getStorageKey(grupo, dia, modulo);
-              const existing = getNotesForCell(grupo, dia, modulo);
-              const noteId = item.ID || item.id || ('sh_' + (item.Fecha || '') + '_' + modulo);
-
-              // Evitar duplicados por ID o por combinación fecha + tema
+              if (!newMap[key]) newMap[key] = [];
               const fechaNorm = typeof item.Fecha === 'string' ? item.Fecha.split('T')[0] : (item.fecha || '');
-              const temaNorm = item["Tema Visto"] || item.tema || '';
-              const alreadyExists = existing.some(n => n.id === noteId || (n.fecha === fechaNorm && n.tema === temaNorm));
-
-              if (!alreadyExists) {
-                existing.unshift({
-                  id: noteId,
-                  fecha: fechaNorm,
-                  tema: temaNorm,
-                  tarea: item.Tarea || item.tarea || '',
-                  incidencias: item.Incidencias || item.incidencias || '',
-                  timestamp: item.Registro || new Date().toISOString()
-                });
-                localStorage.setItem(key, JSON.stringify(existing));
-                countAdded++;
-              }
+              newMap[key].push({
+                id: item.ID || item.id || ('sh_' + fechaNorm + '_' + modulo),
+                fecha: fechaNorm,
+                tema: item["Tema Visto"] || item.tema || '',
+                tarea: item.Tarea || item.tarea || '',
+                incidencias: item.Incidencias || item.incidencias || '',
+                timestamp: item.Registro || new Date().toISOString()
+              });
             }
+          });
+
+          // Limpiar notas locales previas para reflejar exactamente el estado de Sheets (incluyendo borrados)
+          for (let i = localStorage.length - 1; i >= 0; i--) {
+            const k = localStorage.key(i);
+            if (k && k.startsWith('bitacora_')) {
+              localStorage.removeItem(k);
+            }
+          }
+          Object.keys(newMap).forEach(k => {
+            localStorage.setItem(k, JSON.stringify(newMap[k]));
           });
 
           renderTabla();
           if (userInitiated) {
-            showToast(`✓ Google Sheets sincronizado (${data.length} registros en la nube)`, 'success');
+            showToast(`✓ Google Sheets sincronizado (${data.length} notas en la nube)`, 'success');
           }
-        } else if (userInitiated) {
-          showToast('✓ Conectado a Google Sheets (sin notas registradas aún)', 'info');
         }
       } catch (err) {
         console.warn('Error sincronizando con Sheets:', err);
