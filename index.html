@@ -1267,6 +1267,188 @@
       display: block;
     }
 
+    /* Banner Reutilización Rápida */
+    .quick-reuse-box {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(139, 92, 246, 0.12));
+      border: 1px dashed var(--primary);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+    .quick-reuse-content {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex: 1;
+      min-width: 220px;
+    }
+    .quick-reuse-icon {
+      font-size: 1.3rem;
+    }
+    .quick-reuse-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+    .quick-reuse-text strong {
+      font-size: 0.82rem;
+      color: var(--primary);
+    }
+    .reuse-preview {
+      font-size: 0.8rem;
+      color: var(--text-main);
+      font-weight: 600;
+      max-width: 380px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .btn-reuse-action {
+      background-color: var(--primary);
+      color: white;
+      padding: 0.4rem 0.85rem;
+      border-radius: var(--radius-md);
+      font-size: 0.8rem;
+      font-weight: 700;
+      white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.25);
+    }
+    .btn-reuse-action:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Selector de Avance del Tema */
+    .avance-selector-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      margin-top: 0.35rem;
+    }
+    @media (max-width: 540px) {
+      .avance-selector-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .avance-option {
+      cursor: pointer;
+    }
+    .avance-option input[type="radio"] {
+      display: none;
+    }
+    .avance-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.6rem 0.5rem;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border-color);
+      background-color: var(--bg-card-subtle);
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: all var(--transition);
+      text-align: center;
+    }
+    .avance-badge-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-excelente { background-color: #10B981; }
+    .dot-bueno { background-color: #3B82F6; }
+    .dot-poco { background-color: #F59E0B; }
+    .dot-nulo { background-color: #EF4444; }
+
+    .avance-option input[type="radio"]:checked + .avance-card {
+      border-color: var(--primary);
+      background-color: rgba(59, 130, 246, 0.12);
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
+    }
+    .opt-excelente input[type="radio"]:checked + .avance-card {
+      border-color: #10B981;
+      background-color: rgba(16, 185, 129, 0.15);
+      color: #059669;
+    }
+    .opt-bueno input[type="radio"]:checked + .avance-card {
+      border-color: #3B82F6;
+      background-color: rgba(59, 130, 246, 0.15);
+      color: #2563EB;
+    }
+    .opt-poco input[type="radio"]:checked + .avance-card {
+      border-color: #F59E0B;
+      background-color: rgba(245, 158, 11, 0.15);
+      color: #D97706;
+    }
+    .opt-nulo input[type="radio"]:checked + .avance-card {
+      border-color: #EF4444;
+      background-color: rgba(239, 68, 68, 0.15);
+      color: #DC2626;
+    }
+
+    /* Motivo Nulo Chips */
+    .motivo-chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.35rem;
+    }
+    .btn-motivo-chip {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.35rem 0.7rem;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-card-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+    }
+    .btn-motivo-chip:hover {
+      border-color: #EF4444;
+      color: #EF4444;
+      background-color: rgba(239, 68, 68, 0.08);
+    }
+    .btn-motivo-chip.active {
+      background-color: #EF4444;
+      color: white;
+      border-color: #EF4444;
+      box-shadow: 0 2px 4px rgba(239, 68, 68, 0.25);
+    }
+
+    /* Badge de Avance en Historial */
+    .history-avance-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+    }
+    .history-avance-badge.Excelente {
+      background-color: rgba(16, 185, 129, 0.15);
+      color: #059669;
+    }
+    .history-avance-badge.Bueno {
+      background-color: rgba(59, 130, 246, 0.15);
+      color: #2563EB;
+    }
+    .history-avance-badge.Poco {
+      background-color: rgba(245, 158, 11, 0.15);
+      color: #D97706;
+    }
+    .history-avance-badge.Nulo {
+      background-color: rgba(239, 68, 68, 0.15);
+      color: #DC2626;
+    }
+
     /* Formulario de Nueva Nota */
     .form-row {
       margin-bottom: 1.15rem;
@@ -1927,6 +2109,21 @@
         <!-- PESTAÑA 1: NUEVA NOTA -->
         <div class="tab-content active" id="tabContentNew">
           <form id="noteForm" onsubmit="saveNote(event)">
+
+            <!-- Banner de Reutilización de 3º Grado -->
+            <div id="quickReuseBox" class="quick-reuse-box" style="display: none;">
+              <div class="quick-reuse-content">
+                <span class="quick-reuse-icon">⚡</span>
+                <div class="quick-reuse-text">
+                  <strong id="reuseTemaTitle">Reutilizar contenido de 3º:</strong>
+                  <span id="reuseTemaPreview" class="reuse-preview"></span>
+                </div>
+              </div>
+              <button type="button" class="btn-reuse-action" onclick="applyReusedContent()">
+                📋 Usar en este grupo
+              </button>
+            </div>
+
             <div class="form-row">
               <label for="noteDate">Fecha de la sesión:</label>
               <input type="date" id="noteDate" class="form-control" required>
@@ -1934,13 +2131,65 @@
 
             <div class="form-row">
               <label for="noteTema">Tema / Aprendizaje esperado:</label>
-              <input type="text" id="noteTema" class="form-control" placeholder="Ej. Ecuaciones cuadráticas por método de factorización" required>
+              <input type="text" id="noteTema" list="temasDatalist" class="form-control" placeholder="Ej. Ecuaciones cuadráticas por método de factorización" required autocomplete="off">
+              <datalist id="temasDatalist"></datalist>
               <div class="tag-presets-row">
                 <button type="button" class="btn-tag-preset" onclick="addTagToTema('Álgebra:')">+ Álgebra</button>
                 <button type="button" class="btn-tag-preset" onclick="addTagToTema('Geometría:')">+ Geometría</button>
                 <button type="button" class="btn-tag-preset" onclick="addTagToTema('Estadística:')">+ Estadística</button>
                 <button type="button" class="btn-tag-preset" onclick="addTagToTema('Examen Parcial:')">+ Examen</button>
               </div>
+            </div>
+
+            <!-- Selector de Avance del Tema -->
+            <div class="form-row">
+              <label>Avance del Tema:</label>
+              <div class="avance-selector-grid">
+                <label class="avance-option opt-excelente">
+                  <input type="radio" name="avanceRadio" value="Excelente" checked onchange="handleAvanceChange('Excelente')">
+                  <span class="avance-card">
+                    <span class="avance-badge-dot dot-excelente"></span>
+                    <span class="avance-name">Excelente</span>
+                  </span>
+                </label>
+                <label class="avance-option opt-bueno">
+                  <input type="radio" name="avanceRadio" value="Bueno" onchange="handleAvanceChange('Bueno')">
+                  <span class="avance-card">
+                    <span class="avance-badge-dot dot-bueno"></span>
+                    <span class="avance-name">Bueno</span>
+                  </span>
+                </label>
+                <label class="avance-option opt-poco">
+                  <input type="radio" name="avanceRadio" value="Poco" onchange="handleAvanceChange('Poco')">
+                  <span class="avance-card">
+                    <span class="avance-badge-dot dot-poco"></span>
+                    <span class="avance-name">Poco</span>
+                  </span>
+                </label>
+                <label class="avance-option opt-nulo">
+                  <input type="radio" name="avanceRadio" value="Nulo" onchange="handleAvanceChange('Nulo')">
+                  <span class="avance-card">
+                    <span class="avance-badge-dot dot-nulo"></span>
+                    <span class="avance-name">Nulo</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Despliegue condicional para Avance Nulo -->
+            <div class="form-row" id="motivoNuloRow" style="display: none;">
+              <label for="noteMotivoNulo">Motivo por el que no se avanzó (Nulo):</label>
+              <div class="motivo-chips-row">
+                <button type="button" class="btn-motivo-chip" onclick="setMotivoNulo('Examen')">📝 Examen</button>
+                <button type="button" class="btn-motivo-chip" onclick="setMotivoNulo('Suspensión / CTE')">🏛️ Suspensión / CTE</button>
+                <button type="button" class="btn-motivo-chip" onclick="setMotivoNulo('Actividad cívica / deportiva')">🏆 Actividad cívica / deportiva</button>
+                <button type="button" class="btn-motivo-chip" onclick="setMotivoNulo('Cambio de actividad')">🔄 Cambio de actividad</button>
+                <button type="button" class="btn-motivo-chip" onclick="setMotivoNulo('Otro')">✏️ Otro...</button>
+              </div>
+              <div id="motivoOtroContainer" style="margin-top: 0.5rem; display: none;">
+                <input type="text" id="noteMotivoOtro" class="form-control" placeholder="Escribe el motivo específico del nulo avance...">
+              </div>
+              <input type="hidden" id="selectedMotivoPreset" value="">
             </div>
 
             <div class="form-row">
@@ -1950,7 +2199,7 @@
 
             <div class="form-row">
               <label for="noteIncidencias">Incidencias y Observaciones:</label>
-              <textarea id="noteIncidencias" class="form-control" placeholder="Ej. 3 alumnos sin libreta; se reforzó despeje de incógnitas con Juan y María."></textarea>
+              <textarea id="noteIncidencias" class="form-control" placeholder="Ej. Alumnos con buen ritmo de trabajo; se reforzó despeje de incógnitas."></textarea>
               <div class="tag-presets-row">
                 <button type="button" class="btn-tag-preset" onclick="addTagToIncidencias('⚠️ Alumnos sin material de trazo.')">+ Sin material</button>
                 <button type="button" class="btn-tag-preset" onclick="addTagToIncidencias('⭐ Excelente participación general.')">+ Buena clase</button>
@@ -2677,6 +2926,9 @@
     /* ==========================================================================
        9. MODAL DE BITÁCORA Y GESTIÓN DE NOTAS (SECCIÓN C)
        ========================================================================== */
+    /* Variable para almacenar el contenido reusable de 3º */
+    let cachedReuseNote = null;
+
     function openBitacoraModal(dia, moduloId, grupo) {
       State.activeModalCell = { dia, modulo: moduloId, grupo };
 
@@ -2697,6 +2949,18 @@
       document.getElementById('noteIncidencias').value = '';
       document.getElementById('noteDate').value = new Date().toISOString().split('T')[0];
 
+      // Reset de Avance del Tema a "Excelente"
+      const radioExc = document.querySelector('input[name="avanceRadio"][value="Excelente"]');
+      if (radioExc) radioExc.checked = true;
+      document.getElementById('motivoNuloRow').style.display = 'none';
+      document.getElementById('motivoOtroContainer').style.display = 'none';
+      document.getElementById('selectedMotivoPreset').value = '';
+      document.getElementById('noteMotivoOtro').value = '';
+      document.querySelectorAll('.btn-motivo-chip').forEach(b => b.classList.remove('active'));
+
+      // Preparar memoria de temas y tareas (Datalist y Banner de Reutilización)
+      prepararMemoriaTemasYReuso(grupo);
+
       // Cargar historial
       renderHistorial();
 
@@ -2706,6 +2970,98 @@
       // Mostrar modal
       const modal = document.getElementById('bitacoraModal');
       modal.classList.add('open');
+    }
+
+    /* Manejo del Avance y Motivo Nulo */
+    function handleAvanceChange(val) {
+      const row = document.getElementById('motivoNuloRow');
+      if (val === 'Nulo') {
+        row.style.display = 'block';
+      } else {
+        row.style.display = 'none';
+        document.getElementById('motivoOtroContainer').style.display = 'none';
+        document.getElementById('selectedMotivoPreset').value = '';
+        document.getElementById('noteMotivoOtro').value = '';
+        document.querySelectorAll('.btn-motivo-chip').forEach(b => b.classList.remove('active'));
+      }
+    }
+
+    function setMotivoNulo(motivo) {
+      document.getElementById('selectedMotivoPreset').value = motivo;
+      document.querySelectorAll('.btn-motivo-chip').forEach(b => {
+        if (b.textContent.includes(motivo)) {
+          b.classList.add('active');
+        } else {
+          b.classList.remove('active');
+        }
+      });
+
+      const otroBox = document.getElementById('motivoOtroContainer');
+      if (motivo === 'Otro') {
+        otroBox.style.display = 'block';
+        document.getElementById('noteMotivoOtro').focus();
+      } else {
+        otroBox.style.display = 'none';
+      }
+    }
+
+    /* Memoria de Temas de 3º y Autocompletado */
+    function prepararMemoriaTemasYReuso(grupo) {
+      const esTercero = grupo.startsWith('3');
+      const reuseBox = document.getElementById('quickReuseBox');
+      const datalist = document.getElementById('temasDatalist');
+      datalist.innerHTML = '';
+
+      // Obtener todas las notas del grado correspondiente
+      const allNotes = [];
+      const uniqueTemas = new Set();
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('bitacora_')) {
+          const parts = k.split('_'); // bitacora_GRUPO_DIA_MODULO
+          const grp = parts[1];
+          if ((esTercero && grp.startsWith('3')) || (!esTercero && grp === '2D')) {
+            try {
+              const notes = JSON.parse(localStorage.getItem(k));
+              if (Array.isArray(notes)) {
+                notes.forEach(n => {
+                  allNotes.push({ ...n, origenGrupo: grp });
+                  if (n.tema) uniqueTemas.add(n.tema);
+                });
+              }
+            } catch (e) {}
+          }
+        }
+      }
+
+      // Llenar autocompletado (datalist)
+      uniqueTemas.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t;
+        datalist.appendChild(opt);
+      });
+
+      // Ordenar notas por fecha / timestamp descendente para encontrar la última
+      allNotes.sort((a, b) => new Date(b.timestamp || b.fecha) - new Date(a.timestamp || a.fecha));
+
+      if (esTercero && allNotes.length > 0) {
+        // Encontramos la última nota registrada para cualquier grupo de 3º
+        cachedReuseNote = allNotes[0];
+        document.getElementById('reuseTemaTitle').textContent = `Reutilizar de 3º (${cachedReuseNote.origenGrupo}):`;
+        document.getElementById('reuseTemaPreview').textContent = `"${cachedReuseNote.tema}"${cachedReuseNote.tarea ? ' · Tarea: ' + cachedReuseNote.tarea : ''}`;
+        reuseBox.style.display = 'flex';
+      } else {
+        cachedReuseNote = null;
+        reuseBox.style.display = 'none';
+      }
+    }
+
+    function applyReusedContent() {
+      if (!cachedReuseNote) return;
+      document.getElementById('noteTema').value = cachedReuseNote.tema || '';
+      document.getElementById('noteTarea').value = cachedReuseNote.tarea || '';
+      showToast('✓ Tema y tarea de 3º copiados al formulario', 'success');
     }
 
     function closeModal() {
@@ -2773,10 +3129,23 @@
         return;
       }
 
+      const avance = document.querySelector('input[name="avanceRadio"]:checked')?.value || 'Excelente';
+      let motivoNulo = '';
+      if (avance === 'Nulo') {
+        const preset = document.getElementById('selectedMotivoPreset').value;
+        if (preset === 'Otro') {
+          motivoNulo = document.getElementById('noteMotivoOtro').value.trim() || 'Otro motivo';
+        } else {
+          motivoNulo = preset || 'Sin especificar';
+        }
+      }
+
       const newNote = {
         id: 'nota_' + Date.now(),
         fecha,
         tema,
+        avance,
+        motivoNulo,
         tarea,
         incidencias,
         timestamp: new Date().toISOString()
@@ -2794,6 +3163,12 @@
         document.getElementById('noteTema').value = '';
         document.getElementById('noteTarea').value = '';
         document.getElementById('noteIncidencias').value = '';
+        document.getElementById('motivoNuloRow').style.display = 'none';
+        document.getElementById('motivoOtroContainer').style.display = 'none';
+        document.getElementById('noteMotivoOtro').value = '';
+        document.getElementById('selectedMotivoPreset').value = '';
+        const radioExc = document.querySelector('input[name="avanceRadio"][value="Excelente"]');
+        if (radioExc) radioExc.checked = true;
 
         // Actualizar badges en la celda y en el modal
         updateCellNoteBadge(dia, modulo, grupo);
@@ -2808,6 +3183,8 @@
           modulo,
           grupo,
           tema: newNote.tema,
+          avance: newNote.avance,
+          motivoNulo: newNote.motivoNulo,
           tarea: newNote.tarea,
           incidencias: newNote.incidencias
         });
@@ -2867,7 +3244,12 @@
           </div>
 
           <div class="history-section-item">
-            <span class="history-badge-title">Tema Visto:</span>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem; flex-wrap: wrap; gap: 0.4rem;">
+              <span class="history-badge-title" style="margin-bottom: 0;">Tema Visto:</span>
+              <span class="history-avance-badge ${note.avance || 'Excelente'}">
+                ● ${note.avance || 'Excelente'}${note.motivoNulo ? ' (' + escapeHtml(note.motivoNulo) + ')' : ''}
+              </span>
+            </div>
             <strong>${escapeHtml(note.tema)}</strong>
           </div>
 
@@ -3002,6 +3384,8 @@
                 id: item.ID || item.id || ('sh_' + fechaNorm + '_' + modulo),
                 fecha: fechaNorm,
                 tema: item["Tema Visto"] || item.tema || '',
+                avance: item.Avance || item.avance || 'Excelente',
+                motivoNulo: item["Motivo Nulo"] || item.motivoNulo || '',
                 tarea: item.Tarea || item.tarea || '',
                 incidencias: item.Incidencias || item.incidencias || '',
                 timestamp: item.Registro || new Date().toISOString()
