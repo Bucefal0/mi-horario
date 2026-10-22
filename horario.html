@@ -272,6 +272,38 @@
       text-transform: capitalize;
     }
 
+    /* Botón Cloud en Header */
+    .header-cloud-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-lg);
+      font-size: 0.82rem;
+      font-weight: 700;
+      background: rgba(16, 185, 129, 0.12);
+      color: #10B981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .header-cloud-btn:hover {
+      background: rgba(16, 185, 129, 0.22);
+      transform: translateY(-1px);
+    }
+    .header-cloud-btn .cloud-dot {
+      color: #10B981;
+      font-size: 0.75rem;
+    }
+    .header-cloud-btn.syncing .cloud-sync-icon {
+      display: inline-block;
+      animation: spin 1s infinite linear;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
     .header-actions {
       display: flex;
       align-items: center;
@@ -1611,8 +1643,13 @@
           <div class="clock-date" id="clockDate">Cargando fecha...</div>
         </div>
 
-        <!-- Acciones Rápidas (Tema y Proyector) -->
+        <!-- Acciones Rápidas (Tema, Proyector y Cloud) -->
         <div class="header-actions">
+          <button class="header-cloud-btn" id="btnCloudSync" onclick="syncWithGoogleSheets(true)" title="Sincronizar automáticamente con tu Google Sheets">
+            <span class="cloud-dot">●</span>
+            <span>Google Sheets</span>
+            <span class="cloud-sync-icon" id="cloudSyncIcon">🔄</span>
+          </button>
           <button class="btn-icon-text" id="btnThemeToggle" onclick="toggleTheme()" title="Alternar Modo Oscuro / Claro">
             <span id="themeIcon">🌙</span>
             <span id="themeText">Oscuro</span>
@@ -1830,6 +1867,11 @@
           <p>Exporta tus notas pedagógicas en formato JSON, restaura respaldos o imprime el horario oficial.</p>
         </div>
         <div class="tools-buttons">
+          <button class="btn-tool" onclick="syncWithGoogleSheets(true)" title="Sincronizar todas tus notas con tu Google Sheets">
+            <span>☁️</span>
+            <span>Sincronizar Sheets</span>
+          </button>
+
           <button class="btn-tool" onclick="exportJSON()" title="Descargar archivo JSON con todas las notas">
             <span>💾</span>
             <span>Exportar JSON</span>
@@ -1946,6 +1988,8 @@
     /* ==========================================================================
        1. CONSTANTES Y CONFIGURACIÓN BASE
        ========================================================================== */
+    const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbx7WwXqDhuvCQ6B905kTunlqoGbUGTRn9rbUe36q6zguddtK28U15cLGJLLoevecBM/exec";
+
     const GRUPOS = ['2D', '3A', '3B', '3C', '3D', '3E', '3F'];
 
     const COLORES = {
@@ -2035,6 +2079,11 @@
       renderTabla();
       updateClockAndLiveCard();
       setInterval(updateClockAndLiveCard, 1000);
+
+      // Sincronización automática silenciosa con Google Sheets al abrir
+      setTimeout(() => {
+        syncWithGoogleSheets(false);
+      }, 1000);
 
       // Prellenar fecha de hoy en el modal
       const todayStr = new Date().toISOString().split('T')[0];
@@ -2750,6 +2799,18 @@
         updateCellNoteBadge(dia, modulo, grupo);
         renderHistorial();
         switchModalTab('history');
+
+        // Sincronización automática con Google Sheets en segundo plano
+        syncNoteToGoogleSheets({
+          id: newNote.id,
+          fecha: newNote.fecha,
+          dia,
+          modulo,
+          grupo,
+          tema: newNote.tema,
+          tarea: newNote.tarea,
+          incidencias: newNote.incidencias
+        });
       } catch (err) {
         showToast('Error al guardar en almacenamiento local', 'danger');
       }
@@ -2872,6 +2933,85 @@
       const div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
+    }
+
+    /* ==========================================================================
+       9.1 SINCRONIZACIÓN AUTOMÁTICA CON GOOGLE SHEETS
+       ========================================================================== */
+    function syncNoteToGoogleSheets(payload) {
+      const btn = document.getElementById('btnCloudSync');
+      if (btn) btn.classList.add('syncing');
+
+      fetch(GOOGLE_SHEETS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload)
+      }).then(() => {
+        if (btn) btn.classList.remove('syncing');
+        showToast('☁️ Guardado en Google Sheets automáticamente', 'success');
+      }).catch(err => {
+        if (btn) btn.classList.remove('syncing');
+        console.warn('Error enviando a Google Sheets:', err);
+      });
+    }
+
+    async function syncWithGoogleSheets(userInitiated = false) {
+      const btn = document.getElementById('btnCloudSync');
+      if (btn) btn.classList.add('syncing');
+      if (userInitiated) showToast('Conectando con Google Sheets...', 'info');
+
+      try {
+        const res = await fetch(GOOGLE_SHEETS_URL);
+        const data = await res.json();
+
+        if (Array.isArray(data) && data.length > 0) {
+          let countAdded = 0;
+          data.forEach(item => {
+            const grupo = item.Grupo || item.grupo;
+            const dia = item.Día || item.Dia || item.dia;
+            const modulo = item.Módulo || item.Modulo || item.modulo;
+
+            if (grupo && dia && modulo && MATRIZ_HORARIO[dia]) {
+              const key = getStorageKey(grupo, dia, modulo);
+              const existing = getNotesForCell(grupo, dia, modulo);
+              const noteId = item.ID || item.id || ('sh_' + (item.Fecha || '') + '_' + modulo);
+
+              // Evitar duplicados por ID o por combinación fecha + tema
+              const fechaNorm = typeof item.Fecha === 'string' ? item.Fecha.split('T')[0] : (item.fecha || '');
+              const temaNorm = item["Tema Visto"] || item.tema || '';
+              const alreadyExists = existing.some(n => n.id === noteId || (n.fecha === fechaNorm && n.tema === temaNorm));
+
+              if (!alreadyExists) {
+                existing.unshift({
+                  id: noteId,
+                  fecha: fechaNorm,
+                  tema: temaNorm,
+                  tarea: item.Tarea || item.tarea || '',
+                  incidencias: item.Incidencias || item.incidencias || '',
+                  timestamp: item.Registro || new Date().toISOString()
+                });
+                localStorage.setItem(key, JSON.stringify(existing));
+                countAdded++;
+              }
+            }
+          });
+
+          renderTabla();
+          if (userInitiated) {
+            showToast(`✓ Google Sheets sincronizado (${data.length} registros en la nube)`, 'success');
+          }
+        } else if (userInitiated) {
+          showToast('✓ Conectado a Google Sheets (sin notas registradas aún)', 'info');
+        }
+      } catch (err) {
+        console.warn('Error sincronizando con Sheets:', err);
+        if (userInitiated) {
+          showToast('No se pudo sincronizar con Sheets. Verifica tu conexión.', 'danger');
+        }
+      } finally {
+        if (btn) btn.classList.remove('syncing');
+      }
     }
 
     /* ==========================================================================
