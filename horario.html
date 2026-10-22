@@ -2021,16 +2021,16 @@
                   <span class="th-time">09:45 - 10:15</span>
                 </th>
                 <th>M3<span class="th-time">09:40 - 10:40</span></th>
-                <th>M4<span class="th-time">10:40 - 11:40</span></th>
                 <th class="col-receso" title="Receso 2do Grado (Aplica a 2D)">
                   Receso 2º
                   <span class="th-time">10:35 - 11:05</span>
                 </th>
-                <th>M5<span class="th-time">11:40 - 12:40</span></th>
+                <th>M4<span class="th-time">10:40 - 11:40</span></th>
                 <th class="col-receso" title="Receso 3er Grado (Aplica a 3º)">
                   Receso 3º
                   <span class="th-time">11:25 - 11:55</span>
                 </th>
+                <th>M5<span class="th-time">11:40 - 12:40</span></th>
                 <th>M6<span class="th-time">12:40 - 13:30</span></th>
                 <th>M7<span class="th-time">13:30 - 14:20</span></th>
               </tr>
@@ -2282,7 +2282,7 @@
         startMin: 635,
         endMin: 665,
         aplica: '2D',
-        insertAfter: 'M4'
+        insertAfter: 'M3'
       },
       {
         id: 'R3',
@@ -2292,7 +2292,7 @@
         startMin: 685,
         endMin: 715,
         aplica: '3A, 3B, 3C, 3D, 3E, 3F',
-        insertAfter: 'M5'
+        insertAfter: 'M4'
       }
     ];
 
@@ -2432,17 +2432,18 @@
 
         // M3
         tr.appendChild(createCell(dia, 'M3'));
+
+        // RECESO 2: Entre M3 y M4 (10:35 - 11:05)
+        tr.appendChild(createRecesoCell('R2', '2do Grado (2D)', '10:35 - 11:05', '☕'));
+
         // M4
         tr.appendChild(createCell(dia, 'M4'));
 
-        // RECESO 2: Entre M4 y M5 (10:35 - 11:05)
-        tr.appendChild(createRecesoCell('R2', '2do Grado (2D)', '10:35 - 11:05', '☕'));
+        // RECESO 3: Entre M4 y M5 (11:25 - 11:55)
+        tr.appendChild(createRecesoCell('R3', '3er Grado (3º)', '11:25 - 11:55', '🍎'));
 
         // M5
         tr.appendChild(createCell(dia, 'M5'));
-
-        // RECESO 3: Entre M5 y M6 (11:25 - 11:55)
-        tr.appendChild(createRecesoCell('R3', '3er Grado (3º)', '11:25 - 11:55', '🍎'));
 
         // M6
         tr.appendChild(createCell(dia, 'M6'));
