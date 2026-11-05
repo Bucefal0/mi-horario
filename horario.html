@@ -2150,10 +2150,6 @@
                 <th class="col-day">Día</th>
                 <th>M1<span class="th-time">08:00 - 08:50</span></th>
                 <th>M2<span class="th-time">08:50 - 09:40</span></th>
-                <th class="col-receso" title="Receso 1er Grado">
-                  Receso 1º
-                  <span class="th-time">09:45 - 10:15</span>
-                </th>
                 <th>M3<span class="th-time">09:40 - 10:40</span></th>
                 <th class="col-receso" title="Receso 2do Grado (Aplica a 2D)">
                   Receso 2º
@@ -2399,16 +2395,6 @@
 
     const RECESOS = [
       {
-        id: 'R1',
-        nombre: 'Receso 1er Grado',
-        inicio: '09:45',
-        fin: '10:15',
-        startMin: 585,
-        endMin: 615,
-        aplica: '1º Grado',
-        insertAfter: 'M2'
-      },
-      {
         id: 'R2',
         nombre: 'Receso 2do Grado',
         inicio: '10:35',
@@ -2565,10 +2551,6 @@
         tr.appendChild(createCell(dia, 'M1'));
         // M2
         tr.appendChild(createCell(dia, 'M2'));
-
-        // RECESO 1: Entre M2 y M3 (09:45 - 10:15)
-        tr.appendChild(createRecesoCell('R1', '1er Grado', '09:45 - 10:15', '🥪'));
-
         // M3
         tr.appendChild(createCell(dia, 'M3'));
 
@@ -3004,9 +2986,6 @@
       State.currentActiveSession = null;
 
       // Resaltar visualmente columnas de receso en la tabla si la hora actual cae en su rango oficial
-      if (totalMinutes >= 585 && totalMinutes < 615) {
-        document.querySelectorAll('.receso-col-R1').forEach(el => el.classList.add('is-receso-now'));
-      }
       if (totalMinutes >= 635 && totalMinutes < 665) {
         document.querySelectorAll('.receso-col-R2').forEach(el => el.classList.add('is-receso-now'));
       }
