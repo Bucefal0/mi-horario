@@ -2071,11 +2071,11 @@
           <div class="quick-presets">
             <div class="quick-presets-title">Casos de prueba rápida:</div>
             <div class="quick-chips-grid">
-              <button class="btn-quick-chip" onclick="quickSim('Jueves', '10:25')">⚡ Jueves 10:25 (2D fin 10:35)</button>
-              <button class="btn-quick-chip" onclick="quickSim('Jueves', '10:50')">☕ Juev 10:50 (Receso 2D fin 11:05)</button>
-              <button class="btn-quick-chip" onclick="quickSim('Martes', '11:15')">⚡ Mart 11:15 (2D entra 11:05)</button>
-              <button class="btn-quick-chip" onclick="quickSim('Lunes', '11:15')">⏱️ Lun 11:15 (3D fin 11:25)</button>
-              <button class="btn-quick-chip" onclick="quickSim('Lunes', '11:35')">🥪 Lun 11:35 (Receso 3D fin 11:55)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Martes', '10:45')">☕ Mart 10:45 (Descanso 25m: 2D entra 11:05)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Martes', '11:45')">🥪 Mart 11:45 (Descanso 15m: 3E entra 11:55)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Miércoles', '11:30')">🥪 Miér 11:30 (Receso 15m: 2D entra 11:40)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Jueves', '10:25')">⚡ Juev 10:25 (2D M3 sale 10:35)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Lunes', '11:35')">🥪 Lun 11:35 (Receso 3º fin 11:55)</button>
               <button class="btn-quick-chip" onclick="quickSim('Lunes', '12:05')">⚡ Lun 12:05 (3C M5 inició 11:55)</button>
             </div>
           </div>
@@ -2982,114 +2982,145 @@
         progressLabelLeft.textContent = `⏱️ Pasaron ${Math.floor(elapsedSec / 60)} min (${Math.round(pct)}%)`;
         progressLabelRight.textContent = `Salida: ${formatMinutes(endMin)}`;
 
-        // Próxima sesión informativa
-        if (id === 'M4' && !es2D) {
-          const nextGrp = MATRIZ_HORARIO[dayName]['M5'];
-          nextSessionInfo.innerHTML = `Próxima sesión: <strong>Receso 3º (11:25 - 11:55) · Módulo 5 inicia 11:55 con Grupo ${nextGrp}</strong>`;
-        } else if (activeIndex < MODULOS.length - 1) {
+        // Próxima sesión informativa dinámica según tiempo de descanso real
+        if (activeIndex < MODULOS.length - 1) {
           const nextMod = MODULOS[activeIndex + 1];
           const nextGrp = MATRIZ_HORARIO[dayName][nextMod.id];
           const nextEff = getEffectiveModuleTimes(dayName, nextMod.id, nextGrp);
-          nextSessionInfo.innerHTML = `Próxima sesión: <strong>${nextMod.nombre} (${formatMinutes(nextEff.startMin)}) con Grupo ${nextGrp}</strong>`;
+          if (nextEff.startMin > endMin) {
+            const gap = nextEff.startMin - endMin;
+            nextSessionInfo.innerHTML = `Próxima sesión: <strong>Descanso/Receso (${formatMinutes(endMin)} - ${formatMinutes(nextEff.startMin)}, ${gap} min) · ${nextMod.nombre} (${formatMinutes(nextEff.startMin)}) con Grupo ${nextGrp}</strong>`;
+          } else {
+            nextSessionInfo.innerHTML = `Próxima sesión: <strong>${nextMod.nombre} (${formatMinutes(nextEff.startMin)}) con Grupo ${nextGrp}</strong>`;
+          }
         } else {
           nextSessionInfo.innerHTML = 'Próxima sesión: <strong>Última clase de la jornada</strong>';
         }
         return;
       }
 
-      // Si no hay clase activa, verificar si estamos en tiempo de RECESO o TRANSICIÓN:
+      // CASO 5: Si no hay clase activa, determinar exactamente entre qué módulos estamos (Descanso / Receso)
       btnLiveBitacora.style.display = 'none';
       State.currentActiveSession = null;
 
-      // RECESO 3er Grado (11:25 a 11:55 = 685 a 715 min)
-      if (totalMinutes >= 685 && totalMinutes < 715) {
-        document.querySelectorAll('.receso-col-R3').forEach(el => el.classList.add('is-receso-now'));
-        const nextGrp = MATRIZ_HORARIO[dayName]['M5'];
-
-        liveCard.style.setProperty('--live-color', '#F59E0B');
-        liveCard.style.setProperty('--live-bg', 'rgba(245, 158, 11, 0.15)');
-
-        statusPill.className = 'live-status-pill receso';
-        statusDot.textContent = '☕';
-        statusText.textContent = 'En Receso Escolar';
-        timeRange.textContent = '11:25 - 11:55';
-        groupBadge.textContent = '🥪';
-        title.textContent = 'Receso — 3er Grado';
-        subtitle.textContent = `Tiempo de receso escalonado para 3º. Próxima clase entra a las 11:55.`;
-
-        const totalRecesoSec = (715 - 685) * 60;
-        const elapsedSec = (totalMinutes - 685) * 60;
-        const remainingSec = Math.max(0, Math.floor((715 - totalMinutes) * 60));
-        const pct = Math.min(100, Math.max(0, (elapsedSec / totalRecesoSec) * 100));
-
-        const mm = Math.floor(remainingSec / 60);
-        const ss = remainingSec % 60;
-        countdown.textContent = `${pad(mm)}:${pad(ss)}`;
-        if (timerUnit) timerUnit.textContent = 'receso';
-        if (timerCaption) timerCaption.textContent = 'Tiempo de Descanso';
-        if (timerBox) timerBox.className = 'live-timer-box phase-yellow';
-        if (progressBar) progressBar.className = 'progress-bar bar-yellow';
-        if (progressPhaseBadge) {
-          progressPhaseBadge.className = 'progress-phase-badge badge-yellow';
-          progressPhaseBadge.innerHTML = '🥪 En Receso';
-        }
-
-        timerIcon.textContent = '⏳';
-        progressBar.style.width = `${pct}%`;
-        progressBar.textContent = pct >= 14 ? `${Math.round(pct)}%` : '';
-        progressLabelLeft.textContent = `Receso: ${Math.round(pct)}%`;
-        progressLabelRight.textContent = 'Fin: 11:55';
-
-        nextSessionInfo.innerHTML = `Próxima clase: <strong>Módulo 5 a las 11:55 con Grupo ${nextGrp}</strong>`;
-        return;
-      }
-
-      // RECESO 2do Grado (10:35 a 11:05 = 635 a 665 min)
-      if (totalMinutes >= 635 && totalMinutes < 665) {
-        document.querySelectorAll('.receso-col-R2').forEach(el => el.classList.add('is-receso-now'));
-        liveCard.style.setProperty('--live-color', '#8B5CF6');
-        liveCard.style.setProperty('--live-bg', 'rgba(139, 92, 246, 0.15)');
-
-        statusPill.className = 'live-status-pill receso';
-        statusDot.textContent = '☕';
-        statusText.textContent = 'En Receso Escolar';
-        timeRange.textContent = '10:35 - 11:05';
-        groupBadge.textContent = '🥪';
-        title.textContent = 'Receso — 2do Grado';
-        subtitle.textContent = 'Tiempo de receso escalonado para 2º (Grupo 2D).';
-
-        const totalRecesoSec = (665 - 635) * 60;
-        const elapsedSec = (totalMinutes - 635) * 60;
-        const remainingSec = Math.max(0, Math.floor((665 - totalMinutes) * 60));
-        const pct = Math.min(100, Math.max(0, (elapsedSec / totalRecesoSec) * 100));
-
-        const mm = Math.floor(remainingSec / 60);
-        const ss = remainingSec % 60;
-        countdown.textContent = `${pad(mm)}:${pad(ss)}`;
-        if (timerUnit) timerUnit.textContent = 'receso';
-        if (timerCaption) timerCaption.textContent = 'Tiempo de Descanso';
-        if (timerBox) timerBox.className = 'live-timer-box phase-yellow';
-        if (progressBar) progressBar.className = 'progress-bar bar-yellow';
-        if (progressPhaseBadge) {
-          progressPhaseBadge.className = 'progress-phase-badge badge-yellow';
-          progressPhaseBadge.innerHTML = '🥪 En Receso';
-        }
-
-        timerIcon.textContent = '⏳';
-        progressBar.style.width = `${pct}%`;
-        progressBar.textContent = pct >= 14 ? `${Math.round(pct)}%` : '';
-        progressLabelLeft.textContent = `Receso: ${Math.round(pct)}%`;
-        progressLabelRight.textContent = 'Fin: 11:05';
-
-        const nextGrp = MATRIZ_HORARIO[dayName]['M4'];
-        const nextTime = dayName === 'Miércoles' ? '11:05' : '10:40';
-        nextSessionInfo.innerHTML = `Próxima clase: <strong>Módulo 4 (${nextTime}) con Grupo ${nextGrp}</strong>`;
-        return;
-      }
-
-      // RECESO 1er Grado (09:45 a 10:15 = 585 a 615 min) informativo
+      // Resaltar visualmente columnas de receso en la tabla si la hora actual cae en su rango oficial
       if (totalMinutes >= 585 && totalMinutes < 615) {
         document.querySelectorAll('.receso-col-R1').forEach(el => el.classList.add('is-receso-now'));
+      }
+      if (totalMinutes >= 635 && totalMinutes < 665) {
+        document.querySelectorAll('.receso-col-R2').forEach(el => el.classList.add('is-receso-now'));
+      }
+      if (totalMinutes >= 685 && totalMinutes < 715) {
+        document.querySelectorAll('.receso-col-R3').forEach(el => el.classList.add('is-receso-now'));
+      }
+
+      // Buscar módulo anterior y próximo módulo del día
+      let prevClass = null;
+      let nextClass = null;
+      for (let i = 0; i < MODULOS.length; i++) {
+        const m = MODULOS[i];
+        const grp = MATRIZ_HORARIO[dayName][m.id];
+        const eff = getEffectiveModuleTimes(dayName, m.id, grp);
+        if (eff.endMin <= totalMinutes) {
+          prevClass = { ...m, grupo: grp, ...eff };
+        }
+        if (eff.startMin > totalMinutes && !nextClass) {
+          nextClass = { ...m, grupo: grp, ...eff };
+        }
+      }
+
+      if (nextClass) {
+        const breakStart = prevClass ? prevClass.endMin : 480;
+        const breakEnd = nextClass.startMin;
+        const totalBreakSec = Math.max(60, (breakEnd - breakStart) * 60);
+        const elapsedSec = Math.max(0, (totalMinutes - breakStart) * 60);
+        const remainingSec = Math.max(0, Math.floor((breakEnd - totalMinutes) * 60));
+        const pct = Math.min(100, Math.max(0, (elapsedSec / totalBreakSec) * 100));
+
+        const mm = Math.floor(remainingSec / 60);
+        const ss = remainingSec % 60;
+        countdown.textContent = `${pad(mm)}:${pad(ss)}`;
+        if (timerUnit) timerUnit.textContent = 'descanso';
+        if (timerCaption) timerCaption.textContent = 'Tiempo de Descanso';
+        if (timerBox) timerBox.className = 'live-timer-box phase-yellow';
+        if (progressBar) progressBar.className = 'progress-bar bar-yellow';
+        if (progressPhaseBadge) {
+          progressPhaseBadge.className = 'progress-phase-badge badge-yellow';
+          progressPhaseBadge.innerHTML = '🥪 En Descanso';
+        }
+
+        timerIcon.textContent = '☕';
+        progressBar.style.width = `${pct}%`;
+        progressBar.textContent = pct >= 14 ? `${Math.round(pct)}%` : '';
+        progressLabelLeft.textContent = `Descanso: ${Math.round(pct)}%`;
+        progressLabelRight.textContent = `Entrada: ${formatMinutes(breakEnd)}`;
+        timeRange.textContent = `${formatMinutes(breakStart)} - ${formatMinutes(breakEnd)}`;
+
+        // Configuración contextual precisa de títulos y colores según el momento de la semana
+        if (dayName === 'Miércoles' && breakStart === 685 && breakEnd === 700) {
+          // Miércoles: receso corto 11:25 - 11:40 (15 min)
+          liveCard.style.setProperty('--live-color', '#F59E0B');
+          liveCard.style.setProperty('--live-bg', 'rgba(245, 158, 11, 0.15)');
+          statusPill.className = 'live-status-pill receso';
+          statusDot.textContent = '☕';
+          statusText.textContent = 'Receso Corto';
+          groupBadge.textContent = '🥪';
+          title.textContent = 'Receso Corto (15 min)';
+          subtitle.textContent = `3A terminó a las 11:25. Grupo 2D entra a las 11:40 a Módulo 5.`;
+        } else if (dayName === 'Martes' && breakStart === 640 && breakEnd === 665) {
+          // Martes: primer descanso 10:40 - 11:05 (25 min)
+          liveCard.style.setProperty('--live-color', '#8B5CF6');
+          liveCard.style.setProperty('--live-bg', 'rgba(139, 92, 246, 0.15)');
+          statusPill.className = 'live-status-pill receso';
+          statusDot.textContent = '☕';
+          statusText.textContent = 'En Receso Escolar';
+          groupBadge.textContent = '☕';
+          title.textContent = 'Descanso / Receso de 2º (25 min)';
+          subtitle.textContent = `3A terminó a las 10:40. Grupo 2D entra a las 11:05 a Módulo 4 tras su receso.`;
+        } else if (dayName === 'Martes' && breakStart === 700 && breakEnd === 715) {
+          // Martes: segundo descanso 11:40 - 11:55 (15 min)
+          liveCard.style.setProperty('--live-color', '#F59E0B');
+          liveCard.style.setProperty('--live-bg', 'rgba(245, 158, 11, 0.15)');
+          statusPill.className = 'live-status-pill receso';
+          statusDot.textContent = '☕';
+          statusText.textContent = 'En Receso Escolar';
+          groupBadge.textContent = '🥪';
+          title.textContent = 'Descanso / Receso de 3º (15 min)';
+          subtitle.textContent = `2D terminó a las 11:40. Grupo ${nextClass.grupo} entra a las 11:55 tras su receso.`;
+        } else if (breakStart >= 685 && breakEnd <= 715) {
+          // Receso oficial completo de 3º (11:25 - 11:55, 30 min en Lun, Jue, Vie)
+          liveCard.style.setProperty('--live-color', '#F59E0B');
+          liveCard.style.setProperty('--live-bg', 'rgba(245, 158, 11, 0.15)');
+          statusPill.className = 'live-status-pill receso';
+          statusDot.textContent = '☕';
+          statusText.textContent = 'En Receso Escolar';
+          groupBadge.textContent = '🥪';
+          title.textContent = 'Receso — 3er Grado (30 min)';
+          subtitle.textContent = `Tiempo de receso para 3º. Próxima clase (${nextClass.nombre}) inicia 11:55 con ${nextClass.grupo}.`;
+        } else if (dayName === 'Jueves' && breakStart === 635 && breakEnd === 640) {
+          // Jueves: transición corta 10:35 - 10:40 (5 min)
+          liveCard.style.setProperty('--live-color', '#3B82F6');
+          liveCard.style.setProperty('--live-bg', 'rgba(59, 130, 246, 0.15)');
+          statusPill.className = 'live-status-pill';
+          statusDot.textContent = '⏰';
+          statusText.textContent = 'Transición';
+          groupBadge.textContent = '⏱️';
+          title.textContent = 'Cambio de Módulo (5 min)';
+          subtitle.textContent = `2D salió a su receso (10:35). Grupo 3C entra a las 10:40 a Módulo 4.`;
+        } else {
+          // Cualquier otra transición estándar
+          liveCard.style.setProperty('--live-color', '#64748B');
+          liveCard.style.setProperty('--live-bg', 'rgba(100, 116, 139, 0.15)');
+          statusPill.className = 'live-status-pill';
+          statusDot.textContent = '⏱️';
+          statusText.textContent = 'Transición';
+          groupBadge.textContent = '⏱️';
+          title.textContent = 'Transición entre Módulos';
+          subtitle.textContent = `Próxima clase: ${nextClass.nombre} (${formatMinutes(nextClass.startMin)}) con Grupo ${nextClass.grupo}.`;
+        }
+
+        nextSessionInfo.innerHTML = `Próxima clase: <strong>${nextClass.nombre} a las ${formatMinutes(nextClass.startMin)} con Grupo ${nextClass.grupo}</strong>`;
+        return;
       }
     }
 
