@@ -2071,12 +2071,12 @@
           <div class="quick-presets">
             <div class="quick-presets-title">Casos de prueba rápida:</div>
             <div class="quick-chips-grid">
-              <button class="btn-quick-chip" onclick="quickSim('Martes', '10:25')">⚡ Martes 10:25 (2D fin 10:35)</button>
-              <button class="btn-quick-chip" onclick="quickSim('Miércoles', '10:50')">☕ Miér 10:50 (Receso 2D fin 11:05)</button>
-              <button class="btn-quick-chip" onclick="quickSim('Miércoles', '11:15')">⚡ Miér 11:15 (2D fin 11:40)</button>
-              <button class="btn-quick-chip" onclick="quickSim('Lunes', '11:15')">⏱️ Lun 11:15 (3º fin 11:25)</button>
-              <button class="btn-quick-chip" onclick="quickSim('Lunes', '11:35')">🥪 Lun 11:35 (Receso 3º fin 11:55)</button>
-              <button class="btn-quick-chip" onclick="quickSim('Lunes', '12:05')">⚡ Lun 12:05 (M5 inició 11:55)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Jueves', '10:25')">⚡ Jueves 10:25 (2D fin 10:35)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Jueves', '10:50')">☕ Juev 10:50 (Receso 2D fin 11:05)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Martes', '11:15')">⚡ Mart 11:15 (2D entra 11:05)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Lunes', '11:15')">⏱️ Lun 11:15 (3D fin 11:25)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Lunes', '11:35')">🥪 Lun 11:35 (Receso 3D fin 11:55)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Lunes', '12:05')">⚡ Lun 12:05 (3C M5 inició 11:55)</button>
             </div>
           </div>
         </div>
@@ -2432,11 +2432,11 @@
 
     // Matriz Semanal Exacta según especificación
     const MATRIZ_HORARIO = {
-      'Lunes':    { M1: '3F', M2: '3D', M3: '3C', M4: '3A', M5: '3B', M6: '2D', M7: '3E' },
-      'Martes':   { M1: '3D', M2: '3C', M3: '2D', M4: '3A', M5: '3B', M6: '3F', M7: '3E' },
-      'Miércoles': { M1: '3E', M2: '3A', M3: '3F', M4: '2D', M5: '3D', M6: '3B', M7: '3C' },
-      'Jueves':   { M1: '3B', M2: '2D', M3: '3F', M4: '3C', M5: '3D', M6: '3A', M7: '3E' },
-      'Viernes':  { M1: '3E', M2: '3C', M3: '3F', M4: '3D', M5: '3B', M6: '2D', M7: '3A' }
+      'Lunes':    { M1: '3F', M2: '2D', M3: '3B', M4: '3D', M5: '3C', M6: '3A', M7: '3E' },
+      'Martes':   { M1: '3D', M2: '3C', M3: '3A', M4: '2D', M5: '3E', M6: '3B', M7: '3F' },
+      'Miércoles': { M1: '3B', M2: '3D', M3: '3E', M4: '3A', M5: '2D', M6: '3F', M7: '3C' },
+      'Jueves':   { M1: '3F', M2: '3B', M3: '2D', M4: '3C', M5: '3D', M6: '3A', M7: '3E' },
+      'Viernes':  { M1: '3A', M2: '3F', M3: '3B', M4: '3D', M5: '3C', M6: '2D', M7: '3E' }
     };
 
     const DIAS_SEMANA = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
@@ -2721,7 +2721,7 @@
       if (moduloId === 'M4') {
         // En M4, los grupos de 3º terminan a las 11:25 porque a esa hora inicia su receso (11:25 - 11:55)
         if (is3rd) return { startMin: 640, endMin: 685, label: '10:40 - 11:25', note: 'Termina 11:25 (inicia receso de 3º)' };
-        // 2D en M4 (Miércoles) inicia a las 11:05 al terminar su receso (10:35 - 11:05)
+        // 2D en M4 (Martes) inicia a las 11:05 al terminar su receso (10:35 - 11:05)
         if (is2nd) return { startMin: 665, endMin: 700, label: '11:05 - 11:40', note: 'Inicia 11:05 (tras receso de 2º)' };
       }
       if (moduloId === 'M5') {
@@ -2730,7 +2730,7 @@
         if (is2nd) return { startMin: 700, endMin: 760, label: '11:40 - 12:40', note: '11:40 - 12:40' };
       }
       if (moduloId === 'M3') {
-        // 2D en M3 (Martes) termina a las 10:35 porque a esa hora inicia su receso (10:35 - 11:05)
+        // 2D en M3 (Jueves) termina a las 10:35 porque a esa hora inicia su receso (10:35 - 11:05)
         if (is2nd) return { startMin: 580, endMin: 635, label: '09:40 - 10:35', note: 'Termina 10:35 (inicia receso de 2º)' };
         return { startMin: 580, endMin: 640, label: '09:40 - 10:40', note: '' };
       }
