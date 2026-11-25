@@ -1094,15 +1094,15 @@
       position: absolute;
       top: 4px;
       right: 4px;
-      font-size: 0.65rem;
-      font-weight: 800;
-      background: var(--text-main);
-      color: var(--bg-card);
+      font-size: 0.82rem;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.45);
       border-radius: 9999px;
-      padding: 0.1rem 0.35rem;
+      padding: 0.12rem 0.28rem;
       display: inline-flex;
       align-items: center;
-      gap: 0.15rem;
+      justify-content: center;
+      line-height: 1;
       box-shadow: var(--shadow-sm);
     }
 
@@ -1659,6 +1659,199 @@
     .btn-save-note:hover {
       background-color: #059669;
       transform: translateY(-1px);
+    }
+
+    /* Sección de Replicación de Bitácora a Otros Grupos */
+    .replicate-section {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.85rem;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .replicate-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.6rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .replicate-header-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .replicate-count-badge {
+      background: var(--primary);
+      color: var(--primary-text);
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+    }
+
+    .replicate-actions-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
+    .btn-replicate-preset {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.45rem 0.75rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: var(--transition);
+    }
+
+    .btn-replicate-preset:hover {
+      background: var(--border-hover);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-replicate-preset.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-replicate-clear {
+      background: none;
+      border: none;
+      color: var(--danger);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0.2rem 0.4rem;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+
+    .btn-replicate-clear:hover {
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* Menú Contextual Desplegable */
+    .dropdown-replicate-container {
+      position: relative;
+    }
+
+    .replicate-dropdown-menu {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 0;
+      z-index: 100;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-xl);
+      padding: 0.75rem;
+      min-width: 280px;
+      max-width: 340px;
+    }
+
+    .replicate-dropdown-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border-color);
+      gap: 0.3rem;
+    }
+
+    .btn-text-action {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0.1rem 0.3rem;
+    }
+
+    .btn-text-action:hover {
+      text-decoration: underline;
+    }
+
+    .replicate-groups-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.4rem;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .replicate-group-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.5rem;
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 600;
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .replicate-group-chip:hover {
+      border-color: var(--border-hover);
+    }
+
+    .replicate-group-chip.selected {
+      background: rgba(59, 130, 246, 0.12);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .replicate-group-chip input[type="checkbox"] {
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+
+    .replicate-chip-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .replicate-summary-banner {
+      margin-top: 0.65rem;
+      padding: 0.45rem 0.65rem;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      color: var(--success);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.4rem;
+      line-height: 1.35;
     }
 
     /* Pestaña Historial */
@@ -2339,6 +2532,48 @@
               </div>
             </div>
 
+            <!-- SECCIÓN: REPLICACIÓN EN OTROS GRUPOS DEL DÍA -->
+            <div class="form-row replicate-section">
+              <div class="replicate-header-row">
+                <span class="replicate-header-title">
+                  👥 Replicar nota en otros grupos de hoy (<span id="replicateDayName">Lunes</span>):
+                </span>
+                <span id="replicateCountBadge" class="replicate-count-badge" style="display: none;">0 grupos</span>
+              </div>
+
+              <div class="replicate-actions-row">
+                <button type="button" class="btn-replicate-preset" id="btnReplicate3ros" onclick="replicateToAll3ros()">
+                  ⚡ Replicar en todos los 3ros
+                </button>
+                <div class="dropdown-replicate-container">
+                  <button type="button" class="btn-replicate-preset" id="btnToggleReplicateDropdown" onclick="toggleReplicateDropdown(event)">
+                    🎯 Replicar en... ▾
+                  </button>
+                  <div id="replicateDropdownMenu" class="replicate-dropdown-menu" style="display: none;">
+                    <div class="replicate-dropdown-header">
+                      <span>Seleccionar grupos destino:</span>
+                      <div style="display: flex; gap: 0.35rem; align-items: center;">
+                        <button type="button" class="btn-text-action" onclick="selectAllGroupsForReplication(true)">Todos (inc. 2D)</button>
+                        <span style="opacity: 0.3;">|</span>
+                        <button type="button" class="btn-text-action" onclick="selectAllGroupsForReplication(false)">Ninguno</button>
+                      </div>
+                    </div>
+                    <div class="replicate-groups-grid" id="replicateGroupsGrid">
+                      <!-- Renderizado dinámicamente según el día activo -->
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="btn-replicate-clear" id="btnClearReplication" onclick="clearReplicationSelection()" style="display: none;" title="Cancelar réplica">
+                  ✕ Desmarcar
+                </button>
+              </div>
+
+              <div id="replicateSummaryBanner" class="replicate-summary-banner" style="display: none;">
+                <span class="replicate-summary-icon">ℹ️</span>
+                <span id="replicateSummaryText" class="replicate-summary-text"></span>
+              </div>
+            </div>
+
             <div class="modal-footer" style="padding: 1rem 0 0 0; background: none; border-top: none;">
               <button type="button" class="btn-tool" onclick="closeModal()">Cancelar</button>
               <button type="submit" class="btn-save-note">
@@ -2472,6 +2707,15 @@
         }
       });
 
+      // Cerrar menú contextual de replicación al hacer clic afuera
+      document.addEventListener('click', (e) => {
+        const container = document.querySelector('.dropdown-replicate-container');
+        if (container && !container.contains(e.target)) {
+          const menu = document.getElementById('replicateDropdownMenu');
+          if (menu) menu.style.display = 'none';
+        }
+      });
+
       // Listener para cambios de pantalla completa
       document.addEventListener('fullscreenchange', () => {
         if (!document.fullscreenElement) {
@@ -2581,7 +2825,7 @@
       const td = document.createElement('td');
       const grupo = MATRIZ_HORARIO[dia][moduloId];
       const color = COLORES[grupo] || '#3B82F6';
-      const notesCount = getNotesCount(grupo, dia, moduloId);
+      const hasNoteThisWeek = hasNoteInCurrentWeek(grupo, dia, moduloId);
 
       td.dataset.dia = dia;
       td.dataset.modulo = moduloId;
@@ -2596,7 +2840,7 @@
       cellDiv.innerHTML = `
         <span class="cell-subject">Matemáticas</span>
         <span class="cell-group">${grupo}</span>
-        ${notesCount > 0 ? `<span class="cell-notes-badge" title="${notesCount} notas guardadas">📝 ${notesCount}</span>` : ''}
+        ${hasNoteThisWeek ? `<span class="cell-notes-badge" title="Bitácora registrada esta semana">📝</span>` : ''}
       `;
 
       cellDiv.onclick = () => openBitacoraModal(dia, moduloId, grupo);
@@ -3279,6 +3523,9 @@
       document.getElementById('noteMotivoOtro').value = '';
       document.querySelectorAll('.btn-motivo-chip').forEach(b => b.classList.remove('active'));
 
+      // Configurar interfaz de replicación para este día y grupo
+      setupReplicationUI(dia, grupo);
+
       // Preparar memoria de temas y tareas (Datalist y Banner de Reutilización)
       prepararMemoriaTemasYReuso(grupo);
 
@@ -3388,6 +3635,7 @@
     function closeModal() {
       const modal = document.getElementById('bitacoraModal');
       modal.classList.remove('open');
+      clearReplicationSelection();
       State.activeModalCell = null;
     }
 
@@ -3435,6 +3683,190 @@
       return getNotesForCell(grupo, dia, modulo).length;
     }
 
+    /* ==========================================================================
+       9.1 SEMANA ESCOLAR ACTUAL Y BÚSQUEDA DE SESIÓN
+       ========================================================================== */
+    function getCurrentWeekRange() {
+      const now = new Date();
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const day = d.getDay(); // 0: Dom, 1: Lun, ..., 6: Sab
+      const diffToMonday = day === 0 ? -6 : 1 - day;
+      const monday = new Date(d.getFullYear(), d.getMonth(), d.getDate() + diffToMonday);
+      const sunday = new Date(d.getFullYear(), d.getMonth(), d.getDate() + diffToMonday + 6);
+
+      const formatISO = dt => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+      return {
+        monday,
+        sunday,
+        mondayStr: formatISO(monday),
+        sundayStr: formatISO(sunday)
+      };
+    }
+
+    function hasNoteInCurrentWeek(grupo, dia, modulo) {
+      const notes = getNotesForCell(grupo, dia, modulo);
+      if (!notes || notes.length === 0) return false;
+      const { mondayStr, sundayStr } = getCurrentWeekRange();
+
+      return notes.some(n => {
+        let f = n.fecha;
+        if (!f && n.timestamp) {
+          f = n.timestamp.split('T')[0];
+        }
+        return f >= mondayStr && f <= sundayStr;
+      });
+    }
+
+    function findModuleForGroup(dia, grp) {
+      if (!MATRIZ_HORARIO[dia]) return null;
+      const daySchedule = MATRIZ_HORARIO[dia];
+      for (const mId in daySchedule) {
+        if (daySchedule[mId] === grp) return mId;
+      }
+      return null;
+    }
+
+    /* ==========================================================================
+       9.2 GESTIÓN DE REPLICACIÓN DE NOTAS EN OTROS GRUPOS
+       ========================================================================== */
+    function setupReplicationUI(dia, currentGroup) {
+      const daySpan = document.getElementById('replicateDayName');
+      if (daySpan) daySpan.textContent = dia;
+
+      const grid = document.getElementById('replicateGroupsGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      // Obtener todos los grupos programados hoy excepto el grupo que estamos editando
+      const otherGroups = GRUPOS.filter(g => g !== currentGroup);
+
+      otherGroups.forEach(grp => {
+        const modId = findModuleForGroup(dia, grp);
+        const modObj = MODULOS.find(m => m.id === modId);
+        const modNombre = modObj ? modObj.nombre : (modId || '');
+        const color = COLORES[grp] || '#3B82F6';
+
+        const chip = document.createElement('label');
+        chip.className = 'replicate-group-chip';
+        chip.id = `repChip_${grp}`;
+        chip.innerHTML = `
+          <input type="checkbox" value="${grp}" onchange="handleReplicationCheckboxChange()">
+          <span class="replicate-chip-dot" style="background-color: ${color};"></span>
+          <span>${grp} <span style="font-size: 0.68rem; opacity: 0.7;">(${modNombre})</span></span>
+        `;
+        grid.appendChild(chip);
+      });
+
+      clearReplicationSelection();
+    }
+
+    function toggleReplicateDropdown(event) {
+      if (event) event.stopPropagation();
+      const menu = document.getElementById('replicateDropdownMenu');
+      if (!menu) return;
+      const isHidden = menu.style.display === 'none' || menu.style.display === '';
+      menu.style.display = isHidden ? 'block' : 'none';
+    }
+
+    function replicateToAll3ros() {
+      if (!State.activeModalCell) return;
+      const grid = document.getElementById('replicateGroupsGrid');
+      if (!grid) return;
+
+      const checkboxes = grid.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(cb => {
+        // Marcar todos los de 3º y desmarcar 2D
+        if (cb.value.startsWith('3')) {
+          cb.checked = true;
+        } else {
+          cb.checked = false;
+        }
+      });
+
+      handleReplicationCheckboxChange();
+      const menu = document.getElementById('replicateDropdownMenu');
+      if (menu) menu.style.display = 'none';
+    }
+
+    function selectAllGroupsForReplication(selectAll) {
+      const grid = document.getElementById('replicateGroupsGrid');
+      if (!grid) return;
+      const checkboxes = grid.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(cb => { cb.checked = selectAll; });
+      handleReplicationCheckboxChange();
+    }
+
+    function clearReplicationSelection() {
+      const grid = document.getElementById('replicateGroupsGrid');
+      if (grid) {
+        const checkboxes = grid.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(cb => { cb.checked = false; });
+      }
+      handleReplicationCheckboxChange();
+      const menu = document.getElementById('replicateDropdownMenu');
+      if (menu) menu.style.display = 'none';
+    }
+
+    function handleReplicationCheckboxChange() {
+      const grid = document.getElementById('replicateGroupsGrid');
+      if (!grid) return;
+
+      const checkboxes = grid.querySelectorAll('input[type="checkbox"]');
+      const selected = [];
+
+      checkboxes.forEach(cb => {
+        const parentChip = cb.closest('.replicate-group-chip');
+        if (cb.checked) {
+          selected.push(cb.value);
+          if (parentChip) parentChip.classList.add('selected');
+        } else {
+          if (parentChip) parentChip.classList.remove('selected');
+        }
+      });
+
+      const countBadge = document.getElementById('replicateCountBadge');
+      const btnClear = document.getElementById('btnClearReplication');
+      const summaryBanner = document.getElementById('replicateSummaryBanner');
+      const summaryText = document.getElementById('replicateSummaryText');
+      const btn3ros = document.getElementById('btnReplicate3ros');
+
+      const count = selected.length;
+      if (count > 0) {
+        if (countBadge) {
+          countBadge.textContent = `${count} ${count === 1 ? 'grupo' : 'grupos'}`;
+          countBadge.style.display = 'inline-block';
+        }
+        if (btnClear) btnClear.style.display = 'inline-flex';
+        if (summaryBanner) summaryBanner.style.display = 'flex';
+        if (summaryText) {
+          const activeGrp = State.activeModalCell ? State.activeModalCell.grupo : '';
+          summaryText.innerHTML = `Esta nota se guardará para <strong>${activeGrp}</strong> y se replicará automáticamente en: <strong>${selected.join(', ')}</strong>.`;
+        }
+
+        const all3ros = GRUPOS.filter(g => g.startsWith('3') && g !== (State.activeModalCell ? State.activeModalCell.grupo : ''));
+        const isExactAll3ros = all3ros.length === selected.length && all3ros.every(g => selected.includes(g));
+        if (btn3ros) {
+          if (isExactAll3ros) btn3ros.classList.add('active');
+          else btn3ros.classList.remove('active');
+        }
+      } else {
+        if (countBadge) countBadge.style.display = 'none';
+        if (btnClear) btnClear.style.display = 'none';
+        if (summaryBanner) summaryBanner.style.display = 'none';
+        if (btn3ros) btn3ros.classList.remove('active');
+      }
+    }
+
+    function getSelectedReplicationGroups() {
+      const grid = document.getElementById('replicateGroupsGrid');
+      if (!grid) return [];
+      const selected = [];
+      grid.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+        selected.push(cb.value);
+      });
+      return selected;
+    }
+
     function saveNote(e) {
       e.preventDefault();
       if (!State.activeModalCell) return;
@@ -3472,31 +3904,15 @@
         timestamp: new Date().toISOString()
       };
 
+      // 1. Guardar nota del grupo actual
       const key = getStorageKey(grupo, dia, modulo);
       const existing = getNotesForCell(grupo, dia, modulo);
       existing.unshift(newNote); // Agregar al inicio (más reciente)
 
       try {
         localStorage.setItem(key, JSON.stringify(existing));
-        showToast('✓ Nota guardada correctamente en la bitácora', 'success');
 
-        // Limpiar inputs
-        document.getElementById('noteTema').value = '';
-        document.getElementById('noteTarea').value = '';
-        document.getElementById('noteIncidencias').value = '';
-        document.getElementById('motivoNuloRow').style.display = 'none';
-        document.getElementById('motivoOtroContainer').style.display = 'none';
-        document.getElementById('noteMotivoOtro').value = '';
-        document.getElementById('selectedMotivoPreset').value = '';
-        const radioExc = document.querySelector('input[name="avanceRadio"][value="Excelente"]');
-        if (radioExc) radioExc.checked = true;
-
-        // Actualizar badges en la celda y en el modal
-        updateCellNoteBadge(dia, modulo, grupo);
-        renderHistorial();
-        switchModalTab('history');
-
-        // Sincronización automática con Google Sheets en segundo plano
+        // Sincronización automática con Google Sheets en segundo plano para el grupo actual
         syncNoteToGoogleSheets({
           id: newNote.id,
           fecha: newNote.fecha,
@@ -3509,6 +3925,65 @@
           tarea: newNote.tarea,
           incidencias: newNote.incidencias
         });
+
+        // 2. Replicar nota en los grupos seleccionados (si hay)
+        const targetGroups = getSelectedReplicationGroups();
+        if (targetGroups.length > 0) {
+          targetGroups.forEach((tgtGrp, idx) => {
+            const tgtMod = findModuleForGroup(dia, tgtGrp);
+            if (tgtMod) {
+              const repNote = {
+                id: 'nota_' + (Date.now() + idx + 1) + '_' + tgtGrp,
+                fecha: newNote.fecha,
+                tema: newNote.tema,
+                avance: newNote.avance,
+                motivoNulo: newNote.motivoNulo,
+                tarea: newNote.tarea,
+                incidencias: newNote.incidencias,
+                timestamp: new Date().toISOString()
+              };
+              const tgtKey = getStorageKey(tgtGrp, dia, tgtMod);
+              const tgtExisting = getNotesForCell(tgtGrp, dia, tgtMod);
+              tgtExisting.unshift(repNote);
+              localStorage.setItem(tgtKey, JSON.stringify(tgtExisting));
+              updateCellNoteBadge(dia, tgtMod, tgtGrp);
+
+              syncNoteToGoogleSheets({
+                id: repNote.id,
+                fecha: repNote.fecha,
+                dia,
+                modulo: tgtMod,
+                grupo: tgtGrp,
+                tema: repNote.tema,
+                avance: repNote.avance,
+                motivoNulo: repNote.motivoNulo,
+                tarea: repNote.tarea,
+                incidencias: repNote.incidencias
+              });
+            }
+          });
+          showToast(`✓ Nota guardada y replicada en ${targetGroups.length} grupos (${targetGroups.join(', ')})`, 'success');
+        } else {
+          showToast('✓ Nota guardada correctamente en la bitácora', 'success');
+        }
+
+        // Limpiar inputs y replicación
+        document.getElementById('noteTema').value = '';
+        document.getElementById('noteTarea').value = '';
+        document.getElementById('noteIncidencias').value = '';
+        document.getElementById('motivoNuloRow').style.display = 'none';
+        document.getElementById('motivoOtroContainer').style.display = 'none';
+        document.getElementById('noteMotivoOtro').value = '';
+        document.getElementById('selectedMotivoPreset').value = '';
+        const radioExc = document.querySelector('input[name="avanceRadio"][value="Excelente"]');
+        if (radioExc) radioExc.checked = true;
+        clearReplicationSelection();
+
+        // Actualizar badges en la celda y en el modal
+        updateCellNoteBadge(dia, modulo, grupo);
+        renderHistorial();
+        switchModalTab('history');
+
       } catch (err) {
         showToast('Error al guardar en almacenamiento local', 'danger');
       }
@@ -3596,17 +4071,17 @@
       const cell = document.getElementById(`cell-${dia}-${modulo}`);
       if (!cell) return;
 
-      const count = getNotesCount(grupo, dia, modulo);
+      const hasNoteThisWeek = hasNoteInCurrentWeek(grupo, dia, modulo);
       let badge = cell.querySelector('.cell-notes-badge');
 
-      if (count > 0) {
+      if (hasNoteThisWeek) {
         if (!badge) {
           badge = document.createElement('span');
           badge.className = 'cell-notes-badge';
           cell.appendChild(badge);
         }
-        badge.textContent = `📝 ${count}`;
-        badge.title = `${count} notas guardadas`;
+        badge.textContent = '📝';
+        badge.title = 'Bitácora registrada esta semana';
       } else if (badge) {
         badge.remove();
       }
