@@ -1634,6 +1634,13 @@
       color: var(--text-main);
     }
 
+    .btn-tag-preset.active {
+      background-color: rgba(59, 130, 246, 0.15);
+      border-color: var(--primary);
+      color: var(--primary);
+      font-weight: 700;
+    }
+
     .modal-footer {
       padding: 1rem 1.5rem;
       border-top: 1px solid var(--border-color);
@@ -2521,8 +2528,13 @@
             </div>
 
             <div class="form-row">
-              <label for="noteDate">Fecha de la sesión:</label>
-              <input type="date" id="noteDate" class="form-control" required>
+              <label for="noteDate" style="display: flex; align-items: center; justify-content: space-between;">
+                <span>Fecha de la sesión:</span>
+              </label>
+              <input type="date" id="noteDate" class="form-control" required onchange="handleManualDateChange()">
+              <div class="tag-presets-row" id="datePresetsRow" style="margin-top: 0.4rem;">
+                <!-- Chips de fecha contextuales automáticos -->
+              </div>
             </div>
 
             <div class="form-row">
@@ -3587,11 +3599,13 @@
       document.getElementById('modalTitle').textContent = `Matemáticas — Grupo ${grupo}`;
       document.getElementById('modalSubtitle').textContent = `${dia} · ${mod ? mod.nombre : moduloId} (${mod ? mod.inicio + ' - ' + mod.fin : ''})`;
 
-      // Limpiar formulario y prellenar fecha
+      // Limpiar formulario y asignar fecha inteligente del día seleccionado en la semana en curso
       document.getElementById('noteTema').value = '';
       document.getElementById('noteTarea').value = '';
       document.getElementById('noteIncidencias').value = '';
-      document.getElementById('noteDate').value = new Date().toISOString().split('T')[0];
+      const defaultDate = getDateForDayInCurrentWeek(dia, 0);
+      document.getElementById('noteDate').value = defaultDate;
+      updateDatePresets(dia);
 
       // Reset de Avance del Tema a "Excelente"
       const radioExc = document.querySelector('input[name="avanceRadio"][value="Excelente"]');
@@ -3806,6 +3820,65 @@
       return null;
     }
 
+    function getDateForDayInCurrentWeek(diaName, weeksOffset = 0) {
+      const diasOffset = {
+        'Lunes': 0,
+        'Martes': 1,
+        'Miércoles': 2,
+        'Jueves': 3,
+        'Viernes': 4
+      };
+      const offset = diasOffset[diaName] !== undefined ? diasOffset[diaName] : 0;
+
+      const now = new Date();
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const dayOfWeek = d.getDay();
+      const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+
+      const targetDate = new Date(d.getFullYear(), d.getMonth(), d.getDate() + diffToMonday + (weeksOffset * 7) + offset);
+      const formatISO = dt => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+      return formatISO(targetDate);
+    }
+
+    function updateDatePresets(dia) {
+      const container = document.getElementById('datePresetsRow');
+      if (!container) return;
+
+      const dateThisWeek = getDateForDayInCurrentWeek(dia, 0);
+      const dateLastWeek = getDateForDayInCurrentWeek(dia, -1);
+      const todayISO = new Date().toISOString().split('T')[0];
+
+      container.innerHTML = `
+        <button type="button" class="btn-tag-preset active" id="btnDateThisWeek" onclick="setNoteDate('${dateThisWeek}', 'this')">📅 Esta semana (${formatShortDate(dateThisWeek)})</button>
+        <button type="button" class="btn-tag-preset" id="btnDateLastWeek" onclick="setNoteDate('${dateLastWeek}', 'last')">⏪ Semana pasada (${formatShortDate(dateLastWeek)})</button>
+        <button type="button" class="btn-tag-preset" id="btnDateToday" onclick="setNoteDate('${todayISO}', 'today')">📍 Hoy</button>
+      `;
+    }
+
+    function setNoteDate(dateStr, presetKey) {
+      const input = document.getElementById('noteDate');
+      if (input) input.value = dateStr;
+
+      document.querySelectorAll('#datePresetsRow .btn-tag-preset').forEach(b => b.classList.remove('active'));
+      if (presetKey === 'this') document.getElementById('btnDateThisWeek')?.classList.add('active');
+      if (presetKey === 'last') document.getElementById('btnDateLastWeek')?.classList.add('active');
+      if (presetKey === 'today') document.getElementById('btnDateToday')?.classList.add('active');
+    }
+
+    function handleManualDateChange() {
+      document.querySelectorAll('#datePresetsRow .btn-tag-preset').forEach(b => b.classList.remove('active'));
+    }
+
+    function formatShortDate(dateStr) {
+      if (!dateStr) return '';
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        const d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+        return d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+      }
+      return dateStr;
+    }
+
     /* ==========================================================================
        9.2 GESTIÓN DE REPLICACIÓN DE NOTAS EN OTROS GRUPOS
        ========================================================================== */
@@ -3961,6 +4034,7 @@
 
       // Cargar campos en el formulario
       document.getElementById('noteDate').value = note.fecha || '';
+      handleManualDateChange();
       document.getElementById('noteTema').value = note.tema || '';
       document.getElementById('noteTarea').value = note.tarea || '';
       document.getElementById('noteIncidencias').value = note.incidencias || '';
@@ -4027,11 +4101,14 @@
       const repSection = document.querySelector('.replicate-section');
       if (repSection) repSection.style.display = '';
 
-      // Limpiar campos y resetear fecha a hoy
+      // Limpiar campos y resetear fecha inteligente al día de la sesión
       document.getElementById('noteTema').value = '';
       document.getElementById('noteTarea').value = '';
       document.getElementById('noteIncidencias').value = '';
-      document.getElementById('noteDate').value = new Date().toISOString().split('T')[0];
+      const activeDia = State.activeModalCell ? State.activeModalCell.dia : 'Lunes';
+      const defaultDate = getDateForDayInCurrentWeek(activeDia, 0);
+      document.getElementById('noteDate').value = defaultDate;
+      updateDatePresets(activeDia);
       const radioExc = document.querySelector('input[name="avanceRadio"][value="Excelente"]');
       if (radioExc) radioExc.checked = true;
       handleAvanceChange('Excelente');
