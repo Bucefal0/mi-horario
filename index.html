@@ -109,45 +109,297 @@
     /* MODO PROYECTOR */
     body.proyector-mode {
       background: var(--bg-main) !important;
-      font-size: 1.25rem;
+      font-size: 1.15rem;
     }
     body.proyector-mode .no-proyector {
       display: none !important;
     }
+    body.proyector-mode .schedule-section {
+      display: none !important;
+    }
     body.proyector-mode .dashboard-grid {
       grid-template-columns: 1fr !important;
+      margin-bottom: 1rem;
     }
     body.proyector-mode .live-card {
-      margin-bottom: 2rem;
-      padding: 2.5rem;
+      margin-bottom: 1rem;
+      padding: 1.75rem 2rem;
     }
     body.proyector-mode .live-group-badge {
-      font-size: 5rem !important;
+      font-size: 4.5rem !important;
     }
     body.proyector-mode .live-title {
-      font-size: 2.2rem !important;
-    }
-    body.proyector-mode .schedule-table th,
-    body.proyector-mode .schedule-table td {
-      padding: 1.2rem 0.8rem;
-    }
-    body.proyector-mode .cell-group {
-      font-size: 1.8rem !important;
-    }
-    body.proyector-mode .cell-subject {
-      font-size: 1rem !important;
+      font-size: 2rem !important;
     }
     body.proyector-mode .timer-big-digits {
-      font-size: 4.8rem !important;
+      font-size: 4.2rem !important;
     }
     body.proyector-mode .progress-track {
-      height: 44px !important;
+      height: 36px !important;
     }
     body.proyector-mode .progress-labels {
-      font-size: 1.35rem !important;
+      font-size: 1.15rem !important;
     }
     body.proyector-mode .progress-bar {
-      font-size: 1.15rem !important;
+      font-size: 1.05rem !important;
+    }
+
+    /* Roadmap de Clases en Modo Proyector */
+    .proyector-timeline-section {
+      display: none;
+    }
+
+    body.proyector-mode .proyector-timeline-section {
+      display: block !important;
+      background: var(--bg-card);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-color);
+      padding: 1.25rem 1.5rem;
+      box-shadow: var(--shadow-md);
+      margin-top: 0.5rem;
+    }
+
+    body.proyector-mode .proyector-timeline-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    body.proyector-mode .proyector-timeline-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    body.proyector-mode .proyector-timeline-title .p-icon {
+      font-size: 1.5rem;
+    }
+
+    body.proyector-mode .proyector-timeline-title h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 0;
+    }
+
+    body.proyector-mode .proyector-day-badge {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-color);
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+    }
+
+    body.proyector-mode .proyector-stats-badge {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 0.25rem 0.8rem;
+      border-radius: 999px;
+    }
+
+    body.proyector-mode .proyector-timeline-cards {
+      display: flex;
+      gap: 0.65rem;
+      align-items: stretch;
+      overflow-x: auto;
+      padding: 0.25rem 0.1rem 0.5rem 0.1rem;
+    }
+
+    body.proyector-mode .proyector-timeline-cards::-webkit-scrollbar {
+      height: 6px;
+    }
+    body.proyector-mode .proyector-timeline-cards::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    .p-card {
+      flex: 1;
+      min-width: 125px;
+      background: var(--bg-card-subtle);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 0.85rem 0.6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.45rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      user-select: none;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .p-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Clases ya pasadas: Atenuadas suavemente */
+    .p-card.completed {
+      opacity: 0.35;
+      filter: grayscale(20%);
+    }
+
+    .p-card.completed:hover {
+      opacity: 0.85;
+      filter: none;
+    }
+
+    /* Clase en curso: Resaltada con borde luminoso */
+    .p-card.current {
+      background: rgba(59, 130, 246, 0.15);
+      border: 2.5px solid var(--primary);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+      transform: scale(1.03);
+      z-index: 2;
+    }
+
+    .p-card.upcoming {
+      opacity: 0.95;
+    }
+
+    .p-card-top {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .p-card-mod {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .p-card-hours {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .p-card-badge {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #FFFFFF;
+      padding: 0.25rem 0.8rem;
+      border-radius: var(--radius-md);
+      letter-spacing: 0.03em;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+      min-width: 65px;
+      line-height: 1.1;
+    }
+
+    .p-card-status {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.15rem;
+    }
+
+    .p-status-tag {
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .p-status-tag.completed {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10B981;
+    }
+
+    .p-status-tag.current {
+      background: var(--primary);
+      color: #FFFFFF;
+      font-weight: 800;
+    }
+
+    .p-status-tag.upcoming {
+      background: var(--bg-card);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .p-time-left {
+      font-size: 0.68rem;
+      color: var(--primary);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    /* Card de descanso / receso en proyector */
+    .p-break-card {
+      flex: 0 0 auto;
+      min-width: 95px;
+      max-width: 125px;
+      background: rgba(245, 158, 11, 0.08);
+      border: 1.5px dashed rgba(245, 158, 11, 0.4);
+      border-radius: var(--radius-lg);
+      padding: 0.65rem 0.4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.2rem;
+      text-align: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      transition: all 0.25s ease;
+    }
+
+    .p-break-card.completed {
+      opacity: 0.35;
+    }
+
+    .p-break-card.active {
+      background: rgba(245, 158, 11, 0.22);
+      border: 2px solid #F59E0B;
+      color: #D97706;
+      font-weight: 800;
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.35);
+      transform: scale(1.02);
+    }
+
+    .p-break-icon {
+      font-size: 1.25rem;
+    }
+
+    .p-break-name {
+      font-size: 0.68rem;
+      line-height: 1.1;
+      color: var(--text-main);
+    }
+
+    .p-break-time {
+      font-size: 0.66rem;
+      color: var(--text-muted);
+    }
+
+    .p-break-active-badge {
+      background: #F59E0B;
+      color: #111827;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 0.15rem 0.35rem;
+      border-radius: 999px;
+      margin-top: 0.15rem;
     }
 
     /* ==========================================================================
@@ -2856,6 +3108,25 @@
 
       </div>
 
+      <!-- SECCIÓN PROYECTOR: ROADMAP / AGENDA HORIZONTAL DE HOY (Solo visible en Modo Proyector) -->
+      <section class="proyector-timeline-section" id="proyectorTimelineSection">
+        <div class="proyector-timeline-header">
+          <div class="proyector-timeline-title">
+            <span class="p-icon">📋</span>
+            <div>
+              <h3 id="proyectorTimelineTitle">Jornada de Hoy</h3>
+            </div>
+            <span id="proyectorDayBadge" class="proyector-day-badge">Miércoles</span>
+          </div>
+          <div id="proyectorStatsBadge" class="proyector-stats-badge">
+            --
+          </div>
+        </div>
+        <div class="proyector-timeline-cards" id="proyectorTimelineCards">
+          <!-- Generado dinámicamente por renderTodayAgenda() -->
+        </div>
+      </section>
+
       <!-- SECCIÓN B: HORARIO SEMANAL INTERACTIVO -->
       <section class="schedule-section">
         <div class="schedule-header">
@@ -3969,21 +4240,45 @@
     }
 
     /* ==========================================================================
-       6.2 RENDERIZADO DE LA AGENDA DE HOY Y CLASES RESTANTES
+       6.2 RENDERIZADO DE LA AGENDA DE HOY Y MODO PROYECTOR
        ========================================================================== */
+    function getBreakInfo(endMin, startMin) {
+      const gap = startMin - endMin;
+      const timeLabel = `${formatMinutes(endMin)} - ${formatMinutes(startMin)}`;
+      if (endMin === 685 && startMin === 715) {
+        return { title: 'Receso Escolar (3º)', timeLabel, duration: 30, icon: '🥪' };
+      }
+      if (endMin === 640 && startMin === 665) {
+        return { title: 'Descanso Docente (2D en receso)', timeLabel, duration: 25, icon: '☕' };
+      }
+      if (endMin === 700 && startMin === 715) {
+        return { title: 'Descanso Docente (3º en receso)', timeLabel, duration: 15, icon: '🍎' };
+      }
+      if (endMin === 685 && startMin === 700) {
+        return { title: 'Receso Docente', timeLabel, duration: 15, icon: '🥪' };
+      }
+      if (endMin === 635 && startMin === 640) {
+        return { title: 'Transición (2D a receso)', timeLabel, duration: 5, icon: '⚡' };
+      }
+      return { title: `Pausa (${gap} min)`, timeLabel, duration: gap, icon: '☕' };
+    }
+
     function renderTodayAgenda(timeState) {
       const { dayName, totalMinutes } = timeState;
       const isWeekday = DIAS_SEMANA.includes(dayName);
 
       const agendaCard = document.getElementById('todayAgendaCard');
-      if (!agendaCard) return;
-
       const titleEl = document.getElementById('agendaTitle');
       const badgeEl = document.getElementById('agendaDayBadge');
       const statsText = document.getElementById('agendaStatsText');
       const progressFill = document.getElementById('agendaDayProgressFill');
       const listEl = document.getElementById('agendaList');
       const footerEl = document.getElementById('agendaFooterText');
+
+      // Elementos del Roadmap de Modo Proyector
+      const pCards = document.getElementById('proyectorTimelineCards');
+      const pStats = document.getElementById('proyectorStatsBadge');
+      const pBadge = document.getElementById('proyectorDayBadge');
 
       // CASO 1: FIN DE SEMANA
       if (!isWeekday) {
@@ -4004,12 +4299,18 @@
             </div>
           `;
         }
+        if (pCards) {
+          pCards.innerHTML = '<div style="text-align: center; width: 100%; padding: 1.5rem; color: var(--text-muted); font-size: 1.1rem;">🏖️ Fin de semana · No hay clases programadas hoy. Las clases se reanudan el Lunes a las 08:00 con 3F.</div>';
+        }
+        if (pStats) pStats.textContent = '🏖️ Fin de Semana';
+        if (pBadge) pBadge.textContent = dayName;
         return;
       }
 
       // CASO 2: DÍA ESCOLAR (Lunes a Viernes)
       if (titleEl) titleEl.textContent = 'Clases de Hoy';
       if (badgeEl) badgeEl.textContent = `${dayName} · 7 Módulos`;
+      if (pBadge) pBadge.textContent = `${dayName} · 7 Módulos`;
 
       // Recorrer los 7 módulos y evaluar estado
       let completedCount = 0;
@@ -4074,27 +4375,24 @@
       const progressPercent = Math.round((completedCount / 7) * 100);
       if (progressFill) progressFill.style.width = `${progressPercent}%`;
 
-      if (statsText) {
-        if (completedCount === 7) {
-          statsText.textContent = '🎉 7 de 7 concluidas';
-        } else if (activeModuleId) {
-          statsText.textContent = `${completedCount} de 7 concluidas · 1 en curso`;
-        } else if (totalMinutes < 480) {
-          statsText.textContent = '⏰ Por iniciar (7 pendientes)';
-        } else {
-          const remainingCount = 7 - completedCount;
-          statsText.textContent = `${completedCount} de 7 concluidas · ${remainingCount} pendientes`;
-        }
-      }
+      const statsString = completedCount === 7
+        ? '🎉 7 de 7 concluidas'
+        : (activeModuleId
+          ? `${completedCount} de 7 concluidas · 1 en curso`
+          : (totalMinutes < 480
+            ? '⏰ Por iniciar (7 pendientes)'
+            : `${completedCount} de 7 concluidas · ${7 - completedCount} pendientes`));
 
-      // Evaluar Recesos
-      const isReceso2Active = (totalMinutes >= 635 && totalMinutes < 665); // 10:35 - 11:05 (2D)
-      const isReceso3Active = (totalMinutes >= 685 && totalMinutes < 715); // 11:25 - 11:55 (3º)
+      if (statsText) statsText.textContent = statsString;
+      if (pStats) pStats.textContent = statsString;
 
-      // Renderizar filas de la agenda
+      // Renderizar filas de la agenda lateral y cards de proyector
       let html = '';
+      let pHtml = '';
+      let currentActiveBreak = null;
+
       itemsData.forEach((item, idx) => {
-        // Bitácora pill
+        // Bitácora pill para agenda lateral
         let bitacoraHtml = '';
         if (item.hasNote) {
           bitacoraHtml = `<span class="agenda-bitacora-pill ready" title="Bitácora registrada para esta clase"><span class="icon">📝</span> Lista</span>`;
@@ -4127,26 +4425,70 @@
           </div>
         `;
 
-        // Divisor de Receso 2º después de M3
-        if (item.modId === 'M3') {
-          const receso2Label = isReceso2Active
-            ? `☕ Receso 2º (10:35 - 11:05) · EN CURSO (termina en ${Math.ceil(665 - totalMinutes)}m)`
-            : `☕ 10:35 - 11:05 · Receso 2do Grado (2D)`;
-          html += `<div class="agenda-receso-divider ${isReceso2Active ? 'active' : ''}">${receso2Label}</div>`;
+        // Generar Card para Modo Proyector
+        let pStatusHtml = '';
+        if (item.status === 'completed') {
+          pStatusHtml = '<span class="p-status-tag completed">✓ Concluida</span>';
+        } else if (item.status === 'current') {
+          const mLeft = Math.ceil(item.eff.endMin - totalMinutes);
+          pStatusHtml = `<span class="p-status-tag current">▶ EN CURSO</span><span class="p-time-left">Resta: ${mLeft}m</span>`;
+        } else {
+          const mUntil = Math.ceil(item.eff.startMin - totalMinutes);
+          const timeDesc = mUntil <= 60 ? `En ${mUntil}m` : item.eff.label.split('-')[0].trim();
+          pStatusHtml = `<span class="p-status-tag upcoming">⏳ ${timeDesc}</span>`;
         }
 
-        // Divisor de Receso 3º después de M4
-        if (item.modId === 'M4') {
-          const receso3Label = isReceso3Active
-            ? `🥪 Receso 3º (11:25 - 11:55) · EN CURSO (termina en ${Math.ceil(715 - totalMinutes)}m)`
-            : `🥪 11:25 - 11:55 · Receso 3er Grado (3º)`;
-          html += `<div class="agenda-receso-divider ${isReceso3Active ? 'active' : ''}">${receso3Label}</div>`;
+        pHtml += `
+          <div class="p-card ${item.status}" onclick="openBitacoraModal('${dayName}', '${item.modId}', '${item.grupo}')" title="Grupo ${item.grupo} · ${item.nombre} (${item.eff.label})">
+            <div class="p-card-top">
+              <span class="p-card-mod">${item.nombre}</span>
+              <span class="p-card-hours">${item.eff.label}</span>
+            </div>
+            <div class="p-card-badge" style="background-color: ${item.color};">
+              ${item.grupo}
+            </div>
+            <div class="p-card-status">
+              ${pStatusHtml}
+            </div>
+          </div>
+        `;
+
+        // Insertar divisor / descanso SOLO si existe una brecha real (> 0 min) para el docente
+        if (idx < itemsData.length - 1) {
+          const nextItem = itemsData[idx + 1];
+          const gap = nextItem.eff.startMin - item.eff.endMin;
+          if (gap > 0) {
+            const brk = getBreakInfo(item.eff.endMin, nextItem.eff.startMin);
+            const isBreakActive = (totalMinutes >= item.eff.endMin && totalMinutes < nextItem.eff.startMin);
+            const isBreakPassed = (totalMinutes >= nextItem.eff.startMin);
+
+            if (isBreakActive) {
+              currentActiveBreak = { ...brk, nextGrupo: nextItem.grupo, nextStart: nextItem.eff.label.split('-')[0].trim() };
+            }
+
+            // Divisor para agenda lateral
+            const breakLabel = isBreakActive
+              ? `${brk.icon} ${brk.title} (${brk.timeLabel}) · EN CURSO (termina en ${Math.ceil(nextItem.eff.startMin - totalMinutes)}m)`
+              : `${brk.icon} ${brk.timeLabel} · ${brk.title} (${brk.duration} min)`;
+            html += `<div class="agenda-receso-divider ${isBreakActive ? 'active' : ''}">${breakLabel}</div>`;
+
+            // Card de descanso para Modo Proyector
+            pHtml += `
+              <div class="p-break-card ${isBreakActive ? 'active' : (isBreakPassed ? 'completed' : 'upcoming')}">
+                <span class="p-break-icon">${brk.icon}</span>
+                <span class="p-break-name">${brk.title}</span>
+                <span class="p-break-time">${brk.timeLabel} (${brk.duration}m)</span>
+                ${isBreakActive ? `<span class="p-break-active-badge">EN CURSO (${Math.ceil(nextItem.eff.startMin - totalMinutes)}m)</span>` : ''}
+              </div>
+            `;
+          }
         }
       });
 
       if (listEl) listEl.innerHTML = html;
+      if (pCards) pCards.innerHTML = pHtml;
 
-      // Actualizar Footer
+      // Actualizar Footer de la Agenda Lateral
       if (footerEl) {
         if (completedCount === 7) {
           footerEl.innerHTML = '🎉 <strong>¡Jornada escolar concluida!</strong> Todas las clases finalizadas.';
@@ -4157,13 +4499,8 @@
           } else {
             footerEl.innerHTML = 'Última clase del día en curso.';
           }
-        } else if (isReceso2Active || isReceso3Active) {
-          const nextUpcoming = upcomingModules[0];
-          if (nextUpcoming) {
-            footerEl.innerHTML = `En receso · Próxima clase: <strong>${nextUpcoming.grupo}</strong> (${nextUpcoming.label.split('-')[0].trim()})`;
-          } else {
-            footerEl.innerHTML = 'En receso escolar.';
-          }
+        } else if (currentActiveBreak) {
+          footerEl.innerHTML = `${currentActiveBreak.icon} <strong>${currentActiveBreak.title}</strong> en curso · Siguiente: <strong>${currentActiveBreak.nextGrupo}</strong> (${currentActiveBreak.nextStart})`;
         } else if (totalMinutes < 480) {
           const firstMod = itemsData[0];
           footerEl.innerHTML = `1ª clase hoy: <strong>${firstMod.grupo} (08:00)</strong> · Inicia en ${Math.ceil(480 - totalMinutes)} min`;
