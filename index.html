@@ -114,6 +114,9 @@
     body.proyector-mode .no-proyector {
       display: none !important;
     }
+    body.proyector-mode .dashboard-grid {
+      grid-template-columns: 1fr !important;
+    }
     body.proyector-mode .live-card {
       margin-bottom: 2rem;
       padding: 2.5rem;
@@ -340,6 +343,13 @@
       transform: translateY(-1px);
     }
 
+    .btn-icon-text.active {
+      background-color: #F59E0B;
+      color: #111827;
+      border-color: #D97706;
+      font-weight: 700;
+    }
+
     .btn-icon-only {
       width: 38px;
       height: 38px;
@@ -384,6 +394,22 @@
       gap: 0.8rem;
     }
 
+    .btn-simulation-adjust {
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      padding: 0.2rem 0.65rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .btn-simulation-adjust:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
     .btn-simulation-stop {
       background: rgba(0, 0, 0, 0.25);
       color: white;
@@ -392,6 +418,7 @@
       border-radius: var(--radius-sm);
       font-size: 0.75rem;
       font-weight: bold;
+      cursor: pointer;
     }
 
     .btn-simulation-stop:hover {
@@ -407,17 +434,17 @@
     }
 
     /* ==========================================================================
-       SECCIÓN A: TARJETA CLASE EN VIVO Y CONTROLADOR DE SIMULACIÓN
+       SECCIÓN A: TARJETA CLASE EN VIVO Y AGENDA DE CLASES DEL DÍA
        ========================================================================== */
     .dashboard-grid {
       display: grid;
-      grid-template-columns: 1fr 340px;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
       gap: 1.25rem;
       margin-bottom: 1.75rem;
-      align-items: start;
+      align-items: stretch;
     }
 
-    @media (max-width: 1024px) {
+    @media (max-width: 1060px) {
       .dashboard-grid {
         grid-template-columns: 1fr;
       }
@@ -729,40 +756,457 @@
       transform: translateY(-1px);
     }
 
-    /* Panel de Simulación Lateral */
-    .simulacion-card {
+    /* ==========================================================================
+       SECCIÓN A2: TARJETA DE AGENDA DEL DÍA (CLASES RESTANTES)
+       ========================================================================== */
+    .today-agenda-card {
       background: var(--bg-card);
       border-radius: var(--radius-xl);
       border: 1px solid var(--border-color);
       box-shadow: var(--shadow-md);
-      padding: 1.25rem;
+      padding: 1.25rem 1.35rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition);
     }
 
-    .simulacion-card-header {
+    .today-agenda-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #10B981, #3B82F6);
+    }
+
+    .today-agenda-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .today-agenda-title-box {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .agenda-icon-wrap {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      background: rgba(16, 185, 129, 0.15);
+      color: #10B981;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .agenda-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .agenda-day-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .agenda-stats-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.3rem 0.65rem;
+      border-radius: 999px;
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .agenda-day-progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--border-color);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 0.75rem;
+    }
+
+    .agenda-day-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10B981, #06B6D4);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .agenda-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      overflow-y: auto;
+      max-height: 300px;
+      padding-right: 4px;
+      flex: 1;
+    }
+
+    .agenda-list::-webkit-scrollbar {
+      width: 5px;
+    }
+    .agenda-list::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    /* Fila de Clase en la Agenda */
+    .agenda-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.45rem 0.65rem;
+      border-radius: var(--radius-md);
+      background: var(--bg-card-subtle);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .agenda-item:hover {
+      border-color: var(--border-color);
+      transform: translateX(2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .agenda-item.completed {
+      opacity: 0.7;
+    }
+    .agenda-item.completed:hover {
+      opacity: 1;
+    }
+
+    .agenda-item.current {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1.5px solid var(--primary);
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.18);
+    }
+
+    .agenda-item.upcoming {
+      opacity: 0.95;
+    }
+
+    .agenda-item-left {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-shrink: 0;
+    }
+
+    .agenda-item-status-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .agenda-item-status-icon.check {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10B981;
+    }
+
+    .agenda-item-status-icon.live-pulse {
+      background: #3B82F6;
+      color: #FFF;
+      animation: pulse-ring 1.8s infinite;
+    }
+
+    .agenda-item-status-icon.clock {
+      background: rgba(148, 163, 184, 0.2);
+      color: var(--text-muted);
+    }
+
+    .agenda-grp-badge {
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-sm);
+      color: #FFF;
+      font-weight: 800;
+      font-size: 0.78rem;
+      min-width: 32px;
+      text-align: center;
+      flex-shrink: 0;
+      letter-spacing: 0.02em;
+    }
+
+    .agenda-item-center {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .agenda-item-title-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.35rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .agenda-item-mod {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .agenda-item-hours {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .agenda-item-sub {
+      font-size: 0.7rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .agenda-item-sub .text-completed {
+      color: #10B981;
+    }
+    .agenda-item-sub .text-current {
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .agenda-item-sub .text-upcoming {
+      color: var(--text-muted);
+    }
+
+    .agenda-item-right {
+      flex-shrink: 0;
+      margin-left: 0.35rem;
+    }
+
+    .agenda-bitacora-pill {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      white-space: nowrap;
+      transition: all var(--transition);
+    }
+
+    .agenda-bitacora-pill.ready {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10B981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .agenda-bitacora-pill.pending {
+      background: var(--bg-card);
+      color: var(--text-muted);
+      border: 1px dashed var(--border-color);
+    }
+
+    .agenda-bitacora-pill.highlight {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      font-weight: 800;
+    }
+
+    .agenda-item:hover .agenda-bitacora-pill.pending {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Divisores de Receso en la Agenda */
+    .agenda-receso-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-sm);
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px dashed rgba(245, 158, 11, 0.3);
+      user-select: none;
+    }
+
+    .agenda-receso-divider.active {
+      background: rgba(245, 158, 11, 0.2);
+      color: #D97706;
+      border: 1px solid #F59E0B;
+      font-weight: 800;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.25);
+    }
+
+    .today-agenda-footer {
+      margin-top: 0.75rem;
+      padding-top: 0.65rem;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .agenda-empty-state {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       DRAWER / PANEL DESPLEGABLE DE SIMULACIÓN
+       ========================================================================== */
+    .sim-drawer {
+      background: var(--bg-card);
+      border-bottom: 2px solid var(--primary);
+      box-shadow: var(--shadow-lg);
+      padding: 1.25rem 0;
+      position: relative;
+      z-index: 90;
+      animation: simDrawerSlide 0.25s ease-out;
+    }
+
+    @keyframes simDrawerSlide {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .sim-drawer-card {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 1.25rem 1.5rem;
+    }
+
+    .sim-drawer-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.75rem;
     }
 
-    .simulacion-card-header h2 {
-      font-size: 0.95rem;
-      font-weight: 800;
+    .sim-drawer-title {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.75rem;
+    }
+
+    .sim-drawer-title .sim-icon {
+      font-size: 1.5rem;
+    }
+
+    .sim-drawer-title h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 0;
+    }
+
+    .sim-drawer-title p {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .sim-active-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    .btn-close-sim {
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-sm);
+      line-height: 1;
+      transition: all var(--transition);
+    }
+
+    .btn-close-sim:hover {
+      background: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .sim-drawer-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 860px) {
+      .sim-drawer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .sim-controls-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
     }
 
     .sim-form-group {
-      margin-bottom: 0.85rem;
+      margin-bottom: 0.4rem;
     }
 
     .sim-form-group label {
       display: block;
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       font-weight: 700;
       color: var(--text-muted);
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.25rem;
       text-transform: uppercase;
       letter-spacing: 0.03em;
     }
@@ -772,7 +1216,8 @@
       padding: 0.5rem 0.75rem;
       border-radius: var(--radius-md);
       border: 1px solid var(--border-color);
-      background-color: var(--bg-card-subtle);
+      background-color: var(--bg-card);
+      color: var(--text-main);
       font-size: 0.85rem;
       font-weight: 600;
       outline: none;
@@ -784,10 +1229,7 @@
     }
 
     .sim-buttons {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0.5rem;
-      margin-top: 1rem;
+      margin-top: 0.5rem;
     }
 
     .btn-sim-toggle {
@@ -800,6 +1242,9 @@
       background-color: #F59E0B;
       color: white;
       box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+      border: none;
+      cursor: pointer;
+      transition: all var(--transition);
     }
 
     .btn-sim-toggle:hover {
@@ -812,9 +1257,10 @@
     }
 
     .quick-presets {
-      margin-top: 1rem;
-      border-top: 1px solid var(--border-color);
-      padding-top: 0.75rem;
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      padding: 0.85rem;
     }
 
     .quick-presets-title {
@@ -823,17 +1269,24 @@
       font-weight: 700;
       margin-bottom: 0.5rem;
       text-transform: uppercase;
+      letter-spacing: 0.03em;
     }
 
     .quick-chips-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.4rem;
+      gap: 0.45rem;
+    }
+
+    @media (max-width: 600px) {
+      .quick-chips-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .btn-quick-chip {
       font-size: 0.75rem;
-      padding: 0.35rem 0.45rem;
+      padding: 0.4rem 0.55rem;
       border-radius: var(--radius-sm);
       background-color: var(--bg-card-subtle);
       border: 1px solid var(--border-color);
@@ -843,12 +1296,15 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      cursor: pointer;
+      transition: all var(--transition);
     }
 
     .btn-quick-chip:hover {
       border-color: var(--primary);
       color: var(--primary);
       background-color: rgba(59, 130, 246, 0.08);
+      transform: translateY(-1px);
     }
 
     /* ==========================================================================
@@ -2103,6 +2559,8 @@
       .header-actions,
       .live-card,
       .simulacion-card,
+      .today-agenda-card,
+      .sim-drawer,
       .filter-bar,
       .mobile-day-tabs,
       .tools-card,
@@ -2181,7 +2639,10 @@
   <!-- Banner de Simulación (solo visible cuando está activa) -->
   <div id="simBanner" class="simulation-banner">
     <span>⚠️ <strong>MODO SIMULACIÓN ACTIVO:</strong> Visualizando estado simulado de aula.</span>
-    <button class="btn-simulation-stop" onclick="stopSimulation()">Desactivar Simulación</button>
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+      <button class="btn-simulation-adjust" onclick="toggleSimDrawer(true)">⚙️ Ajustar Hora</button>
+      <button class="btn-simulation-stop" onclick="stopSimulation()">Desactivar Simulación</button>
+    </div>
   </div>
 
   <!-- Botón flotante para salir del Modo Proyector -->
@@ -2216,8 +2677,12 @@
           <div class="clock-date" id="clockDate">Cargando fecha...</div>
         </div>
 
-        <!-- Acciones Rápidas (Tema, Proyector y Cloud) -->
+        <!-- Acciones Rápidas (Simulador, Cloud, Tema y Proyector) -->
         <div class="header-actions">
+          <button class="btn-icon-text" id="btnToggleSimDrawer" onclick="toggleSimDrawer()" title="Abrir o cerrar el Panel de Simulación">
+            <span>🧪</span>
+            <span id="btnSimToggleText">Simulador</span>
+          </button>
           <button class="header-cloud-btn" id="btnCloudSync" onclick="syncWithGoogleSheets(true)" title="Sincronizar automáticamente con tu Google Sheets">
             <span class="cloud-dot">●</span>
             <span>Google Sheets</span>
@@ -2236,11 +2701,72 @@
     </div>
   </header>
 
+  <!-- PANEL / DRAWER COLAPSABLE DE SIMULACIÓN -->
+  <div id="simDrawer" class="sim-drawer no-proyector" style="display: none;">
+    <div class="container">
+      <div class="sim-drawer-card">
+        <div class="sim-drawer-header">
+          <div class="sim-drawer-title">
+            <span class="sim-icon">🧪</span>
+            <div>
+              <h3>Modo Simulación y Pruebas de Horario</h3>
+              <p>Simula cualquier día y hora para comprobar la clase activa, recesos escalonados y agenda del día.</p>
+            </div>
+            <span id="simActiveBadge" class="sim-active-badge">Inactivo</span>
+          </div>
+          <button class="btn-close-sim" onclick="toggleSimDrawer(false)" title="Cerrar panel de simulación">✕</button>
+        </div>
+
+        <div class="sim-drawer-grid">
+          <!-- Columna 1: Controles -->
+          <div class="sim-controls-col">
+            <div class="sim-form-group">
+              <label for="simDaySelect">Día de la semana:</label>
+              <select id="simDaySelect" class="sim-select">
+                <option value="Lunes">Lunes</option>
+                <option value="Martes">Martes</option>
+                <option value="Miércoles">Miércoles</option>
+                <option value="Jueves">Jueves</option>
+                <option value="Viernes">Viernes</option>
+                <option value="Sábado">Sábado (Fin de semana)</option>
+                <option value="Domingo">Domingo (Fin de semana)</option>
+              </select>
+            </div>
+
+            <div class="sim-form-group">
+              <label for="simTimeInput">Hora simulada (HH:MM):</label>
+              <input type="time" id="simTimeInput" class="sim-input" value="08:15">
+            </div>
+
+            <div class="sim-buttons">
+              <button id="btnSimToggle" class="btn-sim-toggle" onclick="toggleSimulation()">
+                ▶ Activar Simulación
+              </button>
+            </div>
+          </div>
+
+          <!-- Columna 2: Casos Rápidos -->
+          <div class="quick-presets">
+            <div class="quick-presets-title">Casos de prueba rápida:</div>
+            <div class="quick-chips-grid">
+              <button class="btn-quick-chip" onclick="quickSim('Martes', '10:45')">☕ Mart 10:45 (Descanso 25m: 2D entra 11:05)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Martes', '11:45')">🥪 Mart 11:45 (Descanso 15m: 3E entra 11:55)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Miércoles', '11:30')">🥪 Miér 11:30 (Receso 15m: 2D entra 11:40)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Jueves', '10:25')">⚡ Juev 10:25 (2D M3 sale 10:35)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Lunes', '11:35')">🥪 Lun 11:35 (Receso 3º fin 11:55)</button>
+              <button class="btn-quick-chip" onclick="quickSim('Lunes', '12:05')">⚡ Lun 12:05 (3C M5 inició 11:55)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- CONTENIDO PRINCIPAL -->
   <main>
     <div class="container">
 
-      <!-- DASHBOARD: CLASE EN VIVO + SIMULADOR -->
+      <!-- DASHBOARD: CLASE EN VIVO + AGENDA DEL DÍA -->
       <div class="dashboard-grid">
         
         <!-- SECCIÓN A: TARJETA CLASE EN VIVO (Live Teacher Assistant) -->
@@ -2297,51 +2823,34 @@
           </div>
         </div>
 
-        <!-- PANEL DE SIMULACIÓN -->
-        <div class="simulacion-card no-proyector">
-          <div class="simulacion-card-header">
-            <h2>
-              <span>🧪</span>
-              <span>Modo Simulación</span>
-            </h2>
-            <span id="simActiveBadge" style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted);">Inactivo</span>
-          </div>
-
-          <div class="sim-form-group">
-            <label for="simDaySelect">Día de la semana:</label>
-            <select id="simDaySelect" class="sim-select">
-              <option value="Lunes">Lunes</option>
-              <option value="Martes">Martes</option>
-              <option value="Miércoles">Miércoles</option>
-              <option value="Jueves">Jueves</option>
-              <option value="Viernes">Viernes</option>
-              <option value="Sábado">Sábado (Fin de semana)</option>
-              <option value="Domingo">Domingo (Fin de semana)</option>
-            </select>
-          </div>
-
-          <div class="sim-form-group">
-            <label for="simTimeInput">Hora simulada (HH:MM):</label>
-            <input type="time" id="simTimeInput" class="sim-input" value="08:15">
-          </div>
-
-          <div class="sim-buttons">
-            <button id="btnSimToggle" class="btn-sim-toggle" onclick="toggleSimulation()">
-              ▶ Activar Simulación
-            </button>
-          </div>
-
-          <!-- Pruebas rápidas de simulación -->
-          <div class="quick-presets">
-            <div class="quick-presets-title">Casos de prueba rápida:</div>
-            <div class="quick-chips-grid">
-              <button class="btn-quick-chip" onclick="quickSim('Martes', '10:45')">☕ Mart 10:45 (Descanso 25m: 2D entra 11:05)</button>
-              <button class="btn-quick-chip" onclick="quickSim('Martes', '11:45')">🥪 Mart 11:45 (Descanso 15m: 3E entra 11:55)</button>
-              <button class="btn-quick-chip" onclick="quickSim('Miércoles', '11:30')">🥪 Miér 11:30 (Receso 15m: 2D entra 11:40)</button>
-              <button class="btn-quick-chip" onclick="quickSim('Jueves', '10:25')">⚡ Juev 10:25 (2D M3 sale 10:35)</button>
-              <button class="btn-quick-chip" onclick="quickSim('Lunes', '11:35')">🥪 Lun 11:35 (Receso 3º fin 11:55)</button>
-              <button class="btn-quick-chip" onclick="quickSim('Lunes', '12:05')">⚡ Lun 12:05 (3C M5 inició 11:55)</button>
+        <!-- SECCIÓN A2: AGENDA DE HOY Y CLASES RESTANTES -->
+        <div class="today-agenda-card no-proyector" id="todayAgendaCard">
+          <div class="today-agenda-header">
+            <div class="today-agenda-title-box">
+              <div class="agenda-icon-wrap">📋</div>
+              <div>
+                <h2 class="agenda-title" id="agendaTitle">Clases de Hoy</h2>
+                <span class="agenda-day-badge" id="agendaDayBadge">Cargando...</span>
+              </div>
             </div>
+            <div class="agenda-stats-pill" id="agendaStatsPill">
+              <span id="agendaStatsText">--</span>
+            </div>
+          </div>
+
+          <!-- Barra de Progreso del Día -->
+          <div class="agenda-day-progress-bar">
+            <div class="agenda-day-progress-fill" id="agendaDayProgressFill" style="width: 0%;"></div>
+          </div>
+
+          <!-- Lista Dinámica de Módulos del Día -->
+          <div class="agenda-list" id="agendaList">
+            <!-- Generado dinámicamente por renderTodayAgenda() -->
+          </div>
+
+          <!-- Footer de la Agenda -->
+          <div class="today-agenda-footer" id="todayAgendaFooter">
+            <span id="agendaFooterText">Verificando agenda escolar...</span>
           </div>
         </div>
 
@@ -2760,7 +3269,8 @@
       simulatedTimestampStart: 0,
       activeModalCell: null, // { dia, modulo, grupo }
       editingNoteId: null,   // null o ID de la nota que se está editando
-      currentActiveSession: null // { dia, modulo, grupo, isReceso, ... }
+      currentActiveSession: null, // { dia, modulo, grupo, isReceso, ... }
+      lastAgendaMinuteKey: null
     };
 
     /* ==========================================================================
@@ -2970,8 +3480,9 @@
       const dateStr = `${state.dayName}, ${state.dayNum} de ${mesesEspanol[state.month]}`;
       document.getElementById('clockDate').textContent = dateStr;
 
-      // Evaluar estado escolar
+      // Evaluar estado escolar y agenda del día
       evaluarEstadoEnVivo(state);
+      renderTodayAgenda(state);
     }
 
     /* Obtener estado temporal considerando modo real o simulación */
@@ -3458,8 +3969,236 @@
     }
 
     /* ==========================================================================
-       7. MODO SIMULACIÓN (SECCIÓN A)
+       6.2 RENDERIZADO DE LA AGENDA DE HOY Y CLASES RESTANTES
        ========================================================================== */
+    function renderTodayAgenda(timeState) {
+      const { dayName, totalMinutes } = timeState;
+      const isWeekday = DIAS_SEMANA.includes(dayName);
+
+      const agendaCard = document.getElementById('todayAgendaCard');
+      if (!agendaCard) return;
+
+      const titleEl = document.getElementById('agendaTitle');
+      const badgeEl = document.getElementById('agendaDayBadge');
+      const statsText = document.getElementById('agendaStatsText');
+      const progressFill = document.getElementById('agendaDayProgressFill');
+      const listEl = document.getElementById('agendaList');
+      const footerEl = document.getElementById('agendaFooterText');
+
+      // CASO 1: FIN DE SEMANA
+      if (!isWeekday) {
+        if (titleEl) titleEl.textContent = 'Fin de Semana';
+        if (badgeEl) badgeEl.textContent = dayName;
+        if (statsText) statsText.textContent = '🏖️ Plantel Cerrado';
+        if (progressFill) progressFill.style.width = '0%';
+        if (footerEl) footerEl.innerHTML = 'Próxima jornada escolar: <strong>Lunes 08:00 (M1 con 3F)</strong>';
+
+        if (listEl) {
+          listEl.innerHTML = `
+            <div class="agenda-empty-state">
+              <div style="font-size: 2rem; margin-bottom: 0.35rem;">🏖️</div>
+              <strong style="color: var(--text-main); font-size: 0.95rem;">Sin clases programadas hoy</strong>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.35rem; line-height: 1.4;">
+                Hoy es ${dayName}. Tu horario escolar de Matemáticas se reanuda el <strong>Lunes a las 08:00</strong> iniciando con el grupo <strong>3F</strong>.
+              </p>
+            </div>
+          `;
+        }
+        return;
+      }
+
+      // CASO 2: DÍA ESCOLAR (Lunes a Viernes)
+      if (titleEl) titleEl.textContent = 'Clases de Hoy';
+      if (badgeEl) badgeEl.textContent = `${dayName} · 7 Módulos`;
+
+      // Recorrer los 7 módulos y evaluar estado
+      let completedCount = 0;
+      let activeModuleId = null;
+      let upcomingModules = [];
+      const itemsData = [];
+
+      for (let i = 0; i < MODULOS.length; i++) {
+        const mod = MODULOS[i];
+        const mId = mod.id;
+        const grp = MATRIZ_HORARIO[dayName][mId];
+        const eff = getEffectiveModuleTimes(dayName, mId, grp);
+        const color = COLORES[grp] || '#3B82F6';
+        const hasNote = hasNoteInCurrentWeek(grp, dayName, mId);
+
+        let status = 'upcoming'; // 'completed' | 'current' | 'upcoming'
+        let subtext = '';
+        let statusIcon = '⏳';
+        let statusIconClass = 'clock';
+
+        if (totalMinutes >= eff.endMin) {
+          status = 'completed';
+          completedCount++;
+          subtext = '<span class="text-completed">✓ Concluida</span>';
+          statusIcon = '✓';
+          statusIconClass = 'check';
+        } else if (totalMinutes >= eff.startMin && totalMinutes < eff.endMin) {
+          status = 'current';
+          activeModuleId = mId;
+          const minLeft = Math.ceil(eff.endMin - totalMinutes);
+          subtext = `<span class="text-current">▶ Termina en ${minLeft} min</span>`;
+          statusIcon = '▶';
+          statusIconClass = 'live-pulse';
+        } else {
+          status = 'upcoming';
+          upcomingModules.push({ modId: mId, grupo: grp, startMin: eff.startMin, label: eff.label });
+          const minUntil = Math.ceil(eff.startMin - totalMinutes);
+          if (minUntil <= 60) {
+            subtext = `<span class="text-upcoming">⏳ Inicia en ${minUntil} min</span>`;
+          } else {
+            subtext = `<span class="text-upcoming">Inicia ${eff.label.split('-')[0].trim()}</span>`;
+          }
+          statusIcon = '⏳';
+          statusIconClass = 'clock';
+        }
+
+        itemsData.push({
+          modId: mId,
+          nombre: mod.nombre,
+          grupo: grp,
+          color,
+          eff,
+          hasNote,
+          status,
+          subtext,
+          statusIcon,
+          statusIconClass
+        });
+      }
+
+      // Actualizar Header Stats y Progreso
+      const progressPercent = Math.round((completedCount / 7) * 100);
+      if (progressFill) progressFill.style.width = `${progressPercent}%`;
+
+      if (statsText) {
+        if (completedCount === 7) {
+          statsText.textContent = '🎉 7 de 7 concluidas';
+        } else if (activeModuleId) {
+          statsText.textContent = `${completedCount} de 7 concluidas · 1 en curso`;
+        } else if (totalMinutes < 480) {
+          statsText.textContent = '⏰ Por iniciar (7 pendientes)';
+        } else {
+          const remainingCount = 7 - completedCount;
+          statsText.textContent = `${completedCount} de 7 concluidas · ${remainingCount} pendientes`;
+        }
+      }
+
+      // Evaluar Recesos
+      const isReceso2Active = (totalMinutes >= 635 && totalMinutes < 665); // 10:35 - 11:05 (2D)
+      const isReceso3Active = (totalMinutes >= 685 && totalMinutes < 715); // 11:25 - 11:55 (3º)
+
+      // Renderizar filas de la agenda
+      let html = '';
+      itemsData.forEach((item, idx) => {
+        // Bitácora pill
+        let bitacoraHtml = '';
+        if (item.hasNote) {
+          bitacoraHtml = `<span class="agenda-bitacora-pill ready" title="Bitácora registrada para esta clase"><span class="icon">📝</span> Lista</span>`;
+        } else if (item.status === 'current') {
+          bitacoraHtml = `<span class="agenda-bitacora-pill highlight" title="Registrar bitácora de la clase actual"><span class="icon">📝</span> Registrar</span>`;
+        } else if (item.status === 'completed') {
+          bitacoraHtml = `<span class="agenda-bitacora-pill pending" title="Pendiente de registrar bitácora"><span class="icon">➕</span> Nota</span>`;
+        } else {
+          bitacoraHtml = `<span class="agenda-bitacora-pill pending" title="Registrar o planear con anticipación"><span class="icon">✏️</span> Planear</span>`;
+        }
+
+        html += `
+          <div class="agenda-item ${item.status}" onclick="openBitacoraModal('${dayName}', '${item.modId}', '${item.grupo}')" title="Clic para abrir bitácora de ${item.grupo}">
+            <div class="agenda-item-left">
+              <span class="agenda-item-status-icon ${item.statusIconClass}">${item.statusIcon}</span>
+              <span class="agenda-grp-badge" style="background-color: ${item.color};">${item.grupo}</span>
+            </div>
+            <div class="agenda-item-center">
+              <div class="agenda-item-title-row">
+                <span class="agenda-item-mod">${item.nombre}</span>
+                <span class="agenda-item-hours">${item.eff.label}</span>
+              </div>
+              <div class="agenda-item-sub">
+                ${item.subtext}
+              </div>
+            </div>
+            <div class="agenda-item-right">
+              ${bitacoraHtml}
+            </div>
+          </div>
+        `;
+
+        // Divisor de Receso 2º después de M3
+        if (item.modId === 'M3') {
+          const receso2Label = isReceso2Active
+            ? `☕ Receso 2º (10:35 - 11:05) · EN CURSO (termina en ${Math.ceil(665 - totalMinutes)}m)`
+            : `☕ 10:35 - 11:05 · Receso 2do Grado (2D)`;
+          html += `<div class="agenda-receso-divider ${isReceso2Active ? 'active' : ''}">${receso2Label}</div>`;
+        }
+
+        // Divisor de Receso 3º después de M4
+        if (item.modId === 'M4') {
+          const receso3Label = isReceso3Active
+            ? `🥪 Receso 3º (11:25 - 11:55) · EN CURSO (termina en ${Math.ceil(715 - totalMinutes)}m)`
+            : `🥪 11:25 - 11:55 · Receso 3er Grado (3º)`;
+          html += `<div class="agenda-receso-divider ${isReceso3Active ? 'active' : ''}">${receso3Label}</div>`;
+        }
+      });
+
+      if (listEl) listEl.innerHTML = html;
+
+      // Actualizar Footer
+      if (footerEl) {
+        if (completedCount === 7) {
+          footerEl.innerHTML = '🎉 <strong>¡Jornada escolar concluida!</strong> Todas las clases finalizadas.';
+        } else if (activeModuleId) {
+          const nextUpcoming = upcomingModules[0];
+          if (nextUpcoming) {
+            footerEl.innerHTML = `Siguiente clase: <strong>${nextUpcoming.grupo}</strong> (${nextUpcoming.label.split('-')[0].trim()})`;
+          } else {
+            footerEl.innerHTML = 'Última clase del día en curso.';
+          }
+        } else if (isReceso2Active || isReceso3Active) {
+          const nextUpcoming = upcomingModules[0];
+          if (nextUpcoming) {
+            footerEl.innerHTML = `En receso · Próxima clase: <strong>${nextUpcoming.grupo}</strong> (${nextUpcoming.label.split('-')[0].trim()})`;
+          } else {
+            footerEl.innerHTML = 'En receso escolar.';
+          }
+        } else if (totalMinutes < 480) {
+          const firstMod = itemsData[0];
+          footerEl.innerHTML = `1ª clase hoy: <strong>${firstMod.grupo} (08:00)</strong> · Inicia en ${Math.ceil(480 - totalMinutes)} min`;
+        } else {
+          const nextUpcoming = upcomingModules[0];
+          if (nextUpcoming) {
+            footerEl.innerHTML = `Próxima clase: <strong>${nextUpcoming.grupo}</strong> (${nextUpcoming.label.split('-')[0].trim()})`;
+          } else {
+            footerEl.innerHTML = 'Jornada finalizada.';
+          }
+        }
+      }
+    }
+
+    /* ==========================================================================
+       7. MODO SIMULACIÓN Y DRAWER DESPLEGABLE
+       ========================================================================== */
+    function toggleSimDrawer(forceOpen) {
+      const drawer = document.getElementById('simDrawer');
+      const btn = document.getElementById('btnToggleSimDrawer');
+      if (!drawer) return;
+
+      const isCurrentlyOpen = drawer.style.display !== 'none';
+      const shouldOpen = forceOpen !== undefined ? forceOpen : !isCurrentlyOpen;
+
+      if (shouldOpen) {
+        drawer.style.display = 'block';
+        if (btn) btn.classList.add('active');
+        drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        drawer.style.display = 'none';
+        if (btn && !State.isSimulating) btn.classList.remove('active');
+      }
+    }
+
     function toggleSimulation() {
       if (State.isSimulating) {
         stopSimulation();
@@ -3481,12 +4220,22 @@
 
       // Actualizar UI del simulador
       const btn = document.getElementById('btnSimToggle');
-      btn.textContent = '■ Desactivar Simulación';
-      btn.classList.add('active');
-      document.getElementById('simActiveBadge').textContent = '● ACTIVO';
-      document.getElementById('simActiveBadge').style.color = '#10B981';
-      document.getElementById('simBanner').classList.add('active');
+      if (btn) {
+        btn.textContent = '■ Desactivar Simulación';
+        btn.classList.add('active');
+      }
+      const simBadge = document.getElementById('simActiveBadge');
+      if (simBadge) {
+        simBadge.textContent = '● ACTIVO';
+        simBadge.style.color = '#10B981';
+      }
+      const banner = document.getElementById('simBanner');
+      if (banner) banner.classList.add('active');
 
+      const btnDrawer = document.getElementById('btnToggleSimDrawer');
+      if (btnDrawer) btnDrawer.classList.add('active');
+
+      State.lastAgendaMinuteKey = null;
       updateClockAndLiveCard();
       showToast(`Simulación iniciada: ${day} a las ${timeVal}`, 'info');
     }
@@ -3495,12 +4244,25 @@
       State.isSimulating = false;
 
       const btn = document.getElementById('btnSimToggle');
-      btn.textContent = '▶ Activar Simulación';
-      btn.classList.remove('active');
-      document.getElementById('simActiveBadge').textContent = 'Inactivo';
-      document.getElementById('simActiveBadge').style.color = 'var(--text-muted)';
-      document.getElementById('simBanner').classList.remove('active');
+      if (btn) {
+        btn.textContent = '▶ Activar Simulación';
+        btn.classList.remove('active');
+      }
+      const simBadge = document.getElementById('simActiveBadge');
+      if (simBadge) {
+        simBadge.textContent = 'Inactivo';
+        simBadge.style.color = 'var(--text-muted)';
+      }
+      const banner = document.getElementById('simBanner');
+      if (banner) banner.classList.remove('active');
 
+      const btnDrawer = document.getElementById('btnToggleSimDrawer');
+      const drawer = document.getElementById('simDrawer');
+      if (btnDrawer && (!drawer || drawer.style.display === 'none')) {
+        btnDrawer.classList.remove('active');
+      }
+
+      State.lastAgendaMinuteKey = null;
       updateClockAndLiveCard();
       showToast('Simulación detenida: regresando a hora real', 'info');
     }
@@ -4385,6 +5147,9 @@
       } else if (badge) {
         badge.remove();
       }
+
+      // Actualizar también los indicadores de la Agenda del Día
+      renderTodayAgenda(getCurrentTimeState());
     }
 
     function addTagToTema(tag) {
