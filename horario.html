@@ -1889,19 +1889,83 @@
       color: var(--primary);
     }
 
-    .btn-delete-note {
-      color: var(--danger);
+    .history-actions-row {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .btn-edit-note {
+      color: var(--primary);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
       font-size: 0.78rem;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
       gap: 0.25rem;
-      padding: 0.2rem 0.5rem;
+      padding: 0.25rem 0.55rem;
       border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-edit-note:hover {
+      background-color: rgba(59, 130, 246, 0.12);
+      border-color: var(--primary);
+    }
+
+    .btn-delete-note {
+      color: var(--danger);
+      background: none;
+      border: 1px solid transparent;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.55rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
     }
 
     .btn-delete-note:hover {
       background-color: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    /* Banner informativo al editar una nota */
+    .editing-banner {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      border-radius: var(--radius-md);
+      padding: 0.6rem 0.85rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--primary);
+      font-weight: 600;
+      animation: fadeIn 0.2s ease-in;
+    }
+
+    .btn-cancel-edit {
+      background: none;
+      border: none;
+      color: var(--danger);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0.2rem 0.4rem;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+
+    .btn-cancel-edit:hover {
+      background: rgba(239, 68, 68, 0.1);
+      text-decoration: underline;
     }
 
     .history-section-item {
@@ -2433,6 +2497,15 @@
         <div class="tab-content active" id="tabContentNew">
           <form id="noteForm" onsubmit="saveNote(event)">
 
+            <!-- Banner de Modo Edición -->
+            <div id="editingBanner" class="editing-banner" style="display: none;">
+              <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <span>✏️</span>
+                <span>Editando nota del <strong id="editingDateText"></strong></span>
+              </div>
+              <button type="button" class="btn-cancel-edit" onclick="cancelEditingNote()">✕ Cancelar edición</button>
+            </div>
+
             <!-- Banner de Reutilización de 3º Grado -->
             <div id="quickReuseBox" class="quick-reuse-box" style="display: none;">
               <div class="quick-reuse-content">
@@ -2576,7 +2649,7 @@
 
             <div class="modal-footer" style="padding: 1rem 0 0 0; background: none; border-top: none;">
               <button type="button" class="btn-tool" onclick="closeModal()">Cancelar</button>
-              <button type="submit" class="btn-save-note">
+              <button type="submit" class="btn-save-note" id="btnSubmitNote">
                 <span>💾 Guardar en Bitácora</span>
               </button>
             </div>
@@ -2674,6 +2747,7 @@
       simulatedSecondsBase: 0,
       simulatedTimestampStart: 0,
       activeModalCell: null, // { dia, modulo, grupo }
+      editingNoteId: null,   // null o ID de la nota que se está editando
       currentActiveSession: null // { dia, modulo, grupo, isReceso, ... }
     };
 
@@ -3065,7 +3139,9 @@
         }
         progressLabelRight.textContent = `Faltan ${minRestantes}m`;
         nextSessionInfo.innerHTML = `Primera sesión de hoy: <strong>Módulo 1 (08:00 - 08:50) con ${grupoM1}</strong>`;
+        const hasNoteTodayM1 = hasNoteInCurrentWeek(grupoM1, dayName, 'M1');
         btnLiveBitacora.style.display = 'inline-flex';
+        btnLiveBitacora.innerHTML = hasNoteTodayM1 ? '<span>✏️ Ver / Editar Bitácora</span>' : '<span>📝 Registrar Bitácora</span>';
         btnLiveBitacora.onclick = () => openBitacoraModal(dayName, 'M1', grupoM1);
         State.currentActiveSession = { dia: dayName, modulo: 'M1', grupo: grupoM1 };
         return;
@@ -3147,7 +3223,9 @@
 
         liveCard.style.setProperty('--live-color', color);
         liveCard.style.setProperty('--live-bg', `rgba(${hexToRgb(color)}, 0.15)`);
+        const hasNoteToday = hasNoteInCurrentWeek(grupo, dayName, id);
         btnLiveBitacora.style.display = 'inline-flex';
+        btnLiveBitacora.innerHTML = hasNoteToday ? '<span>✏️ Ver / Editar Bitácora</span>' : '<span>📝 Registrar Bitácora</span>';
         btnLiveBitacora.onclick = () => openBitacoraModal(dayName, id, grupo);
         State.currentActiveSession = { dia: dayName, modulo: id, grupo };
 
@@ -3496,6 +3574,7 @@
 
     function openBitacoraModal(dia, moduloId, grupo) {
       State.activeModalCell = { dia, modulo: moduloId, grupo };
+      cancelEditingNote();
 
       const mod = MODULOS.find(m => m.id === moduloId);
       const color = COLORES[grupo] || '#3B82F6';
@@ -3635,6 +3714,7 @@
     function closeModal() {
       const modal = document.getElementById('bitacoraModal');
       modal.classList.remove('open');
+      cancelEditingNote();
       clearReplicationSelection();
       State.activeModalCell = null;
     }
@@ -3867,6 +3947,96 @@
       return selected;
     }
 
+    /* ==========================================================================
+       9.3 MODO EDICIÓN DE NOTA EXISTENTE
+       ========================================================================== */
+    function startEditingNote(noteId) {
+      if (!State.activeModalCell) return;
+      const { dia, modulo, grupo } = State.activeModalCell;
+      const notes = getNotesForCell(grupo, dia, modulo);
+      const note = notes.find(n => n.id === noteId);
+      if (!note) return;
+
+      State.editingNoteId = noteId;
+
+      // Cargar campos en el formulario
+      document.getElementById('noteDate').value = note.fecha || '';
+      document.getElementById('noteTema').value = note.tema || '';
+      document.getElementById('noteTarea').value = note.tarea || '';
+      document.getElementById('noteIncidencias').value = note.incidencias || '';
+
+      // Avance del tema
+      const avanceVal = note.avance || 'Excelente';
+      const radio = document.querySelector(`input[name="avanceRadio"][value="${avanceVal}"]`);
+      if (radio) radio.checked = true;
+      handleAvanceChange(avanceVal);
+
+      if (avanceVal === 'Nulo') {
+        const motivo = note.motivoNulo || '';
+        const presets = ['Examen', 'Suspensión / CTE', 'Actividad cívica / deportiva', 'Cambio de actividad'];
+        if (presets.includes(motivo)) {
+          setMotivoNulo(motivo);
+        } else if (motivo) {
+          setMotivoNulo('Otro');
+          document.getElementById('noteMotivoOtro').value = motivo;
+        }
+      }
+
+      // Banner de edición
+      const banner = document.getElementById('editingBanner');
+      if (banner) {
+        document.getElementById('editingDateText').textContent = formatReadableDate(note.fecha);
+        banner.style.display = 'flex';
+      }
+
+      const submitBtn = document.getElementById('btnSubmitNote');
+      if (submitBtn) {
+        submitBtn.innerHTML = '<span>💾 Guardar Cambios</span>';
+      }
+
+      const tabTitle = document.getElementById('tabBtnNew');
+      if (tabTitle) {
+        tabTitle.querySelector('span').textContent = '✏️ Editando Nota';
+      }
+
+      // Ocultar replicación en modo edición (la edición es particular de este grupo)
+      const repSection = document.querySelector('.replicate-section');
+      if (repSection) repSection.style.display = 'none';
+
+      // Cambiar de inmediato a la pestaña del formulario
+      switchModalTab('new');
+    }
+
+    function cancelEditingNote() {
+      State.editingNoteId = null;
+
+      const banner = document.getElementById('editingBanner');
+      if (banner) banner.style.display = 'none';
+
+      const submitBtn = document.getElementById('btnSubmitNote');
+      if (submitBtn) {
+        submitBtn.innerHTML = '<span>💾 Guardar en Bitácora</span>';
+      }
+
+      const tabTitle = document.getElementById('tabBtnNew');
+      if (tabTitle) {
+        tabTitle.querySelector('span').textContent = '✍️ Nueva Nota';
+      }
+
+      // Restaurar sección de replicación
+      const repSection = document.querySelector('.replicate-section');
+      if (repSection) repSection.style.display = '';
+
+      // Limpiar campos y resetear fecha a hoy
+      document.getElementById('noteTema').value = '';
+      document.getElementById('noteTarea').value = '';
+      document.getElementById('noteIncidencias').value = '';
+      document.getElementById('noteDate').value = new Date().toISOString().split('T')[0];
+      const radioExc = document.querySelector('input[name="avanceRadio"][value="Excelente"]');
+      if (radioExc) radioExc.checked = true;
+      handleAvanceChange('Excelente');
+    }
+
     function saveNote(e) {
       e.preventDefault();
       if (!State.activeModalCell) return;
@@ -3891,6 +4061,54 @@
         } else {
           motivoNulo = preset || 'Sin especificar';
         }
+      }
+
+      // === CASO A: MODO EDICIÓN (Actualizar nota existente de este grupo) ===
+      if (State.editingNoteId) {
+        const key = getStorageKey(grupo, dia, modulo);
+        const existing = getNotesForCell(grupo, dia, modulo);
+        const idx = existing.findIndex(n => n.id === State.editingNoteId);
+
+        if (idx !== -1) {
+          existing[idx] = {
+            ...existing[idx],
+            fecha,
+            tema,
+            avance,
+            motivoNulo,
+            tarea,
+            incidencias,
+            timestamp: new Date().toISOString()
+          };
+
+          try {
+            localStorage.setItem(key, JSON.stringify(existing));
+
+            // Sincronizar en Google Sheets
+            syncNoteToGoogleSheets({
+              id: existing[idx].id,
+              fecha: existing[idx].fecha,
+              dia,
+              modulo,
+              grupo,
+              tema: existing[idx].tema,
+              avance: existing[idx].avance,
+              motivoNulo: existing[idx].motivoNulo,
+              tarea: existing[idx].tarea,
+              incidencias: existing[idx].incidencias
+            });
+
+            showToast('✓ Cambios guardados en la bitácora', 'success');
+
+            cancelEditingNote();
+            updateCellNoteBadge(dia, modulo, grupo);
+            renderHistorial();
+            switchModalTab('history');
+          } catch (err) {
+            showToast('Error al actualizar en almacenamiento local', 'danger');
+          }
+        }
+        return;
       }
 
       const newNote = {
@@ -4034,9 +4252,14 @@
         card.innerHTML = `
           <div class="history-header">
             <span class="history-date">📅 ${formatReadableDate(note.fecha)}</span>
-            <button class="btn-delete-note" onclick="deleteNote('${note.id}')" title="Eliminar nota">
-              🗑️ Eliminar
-            </button>
+            <div class="history-actions-row">
+              <button class="btn-edit-note" onclick="startEditingNote('${note.id}')" title="Editar nota">
+                ✏️ Editar
+              </button>
+              <button class="btn-delete-note" onclick="deleteNote('${note.id}')" title="Eliminar nota">
+                🗑️ Eliminar
+              </button>
+            </div>
           </div>
 
           <div class="history-section-item">
